@@ -1,0 +1,76 @@
+body {
+    font-family: 'Comic Sans MS', sans-serif;
+    background-color: #FFF8F0;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    text-align: center;
+    padding: 1rem;
+    background-color: #FFD9D9;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+button {
+    padding: 1rem 2rem;
+    margin: 0.5rem;
+    border-radius: 12px;
+    border: none;
+    background-color: #FFB6B9;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #FF8C8C;
+}
+
+.hidden {
+    display: none;
+}
+
+#dessins-preview img {
+    max-width: 100px;
+    margin: 5px;
+    border-radius: 8px;
+}
+
+#fonds-container, #cartes-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+#fonds-container img, #cartes-container img {
+    width: 100px;
+    margin: 5px;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#fonds-container img:hover, #cartes-container img:hover {
+    transform: scale(1.1);
+}
+
+#panier {
+    background-color: #FFF0F5;
+    padding: 10px;
+    border-radius: 12px;
+    margin: 10px 0;
+}
+
+#story-canvas {
+    width: 100%;
+    height: 300px;
+    background-color: #E0F7FA;
+    border-radius: 12px;
+    margin: 10px 0;
+}
