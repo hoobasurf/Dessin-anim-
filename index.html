@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Histoire Animée</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Mon Histoire Animée 🌈</h1>
+    </header>
+
+    <main>
+        <!-- Écran 1 : Choix du mode -->
+        <section id="mode-selection">
+            <button class="mode-btn" data-mode="dessins">✏️ Mes dessins</button>
+            <button class="mode-btn" data-mode="dessins-cartes">✏️+🃏 Dessins + cartes</button>
+            <button class="mode-btn" data-mode="cartes">🃏 Cartes uniquement</button>
+        </section>
+
+        <!-- Écran 2 : Import dessins -->
+        <section id="import-dessins" class="hidden">
+            <h2>Importer 1 à 3 dessins</h2>
+            <input type="file" id="file-input" accept="image/*" multiple>
+            <div id="dessins-preview"></div>
+            <button id="next-to-cards">Suivant →</button>
+        </section>
+
+        <!-- Écran 3 : Table des cartes et fonds -->
+        <section id="cartes-section" class="hidden">
+            <h2>Choisis ton fond et tes cartes</h2>
+            <div id="fonds-container"></div>
+            <div id="cartes-container"></div>
+            <div id="panier">
+                <h3>Cartes choisies : <span id="panier-count">0</span>/10</h3>
+            </div>
+            <button id="generate-story">Générer l’histoire</button>
+        </section>
+
+        <!-- Écran 4 : Histoire animée -->
+        <section id="story-section" class="hidden">
+            <h2>Ton histoire animée ✨</h2>
+            <div id="story-canvas"></div>
+            <button id="replay">Rejouer</button>
+            <button id="home">Retour au menu</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
