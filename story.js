@@ -1,4 +1,4 @@
-// story.js — moteur complet d'animation, voix cartoon, bouche et yeux qui bougent
+// story.js — moteur complet d'animation, yeux clignotent, bouche animée, voix cartoon
 document.addEventListener("DOMContentLoaded", () => {
 
   const preview = document.getElementById("preview-container");
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!window.selectedCartes) window.selectedCartes = [];
   if (!window.selectedBackground) window.selectedBackground = null;
 
-  // Voix cartoon pour chaque animal
+  // Paramètres voix pour chaque animal
   const animauxVoix = {
     "cochon.png": { pitch: 0.6, rate: 0.8, text: "Groin groin !" },
     "chat.png": { pitch: 1.5, rate: 1.8, text: "Miaou !" },
@@ -24,30 +24,60 @@ document.addEventListener("DOMContentLoaded", () => {
     "girafe.png": { pitch: 1.0, rate: 1.0, text: "Hmm !" }
   };
 
-  // Crée un animal ou dessin avec animation
-  function createAnimal(src, index, offset = 0){
+  function createAnimalElement(src, index, offset = 0){
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.width = "90px";
+    container.style.bottom = `${Math.random()*150}px`;
+    container.style.left = `${50 + index*120 + offset}px`;
+    container.style.textAlign = "center";
+
     const img = document.createElement("img");
     img.src = src;
-    img.style.position = "absolute";
     img.style.width = "90px";
-    img.style.bottom = `${Math.random()*150}px`;
-    img.style.left = `${50 + index*120 + offset}px`;
-    img.style.transition = "transform 0.2s";
+    container.appendChild(img);
 
+    // Ajout yeux
+    const eyes = document.createElement("div");
+    eyes.style.position = "absolute";
+    eyes.style.width = "20px";
+    eyes.style.height = "8px";
+    eyes.style.borderRadius = "50%";
+    eyes.style.background = "black";
+    eyes.style.top = "15px";
+    eyes.style.left = "35px";
+    container.appendChild(eyes);
+
+    // Bouche
+    const mouth = document.createElement("div");
+    mouth.style.position = "absolute";
+    mouth.style.width = "20px";
+    mouth.style.height = "6px";
+    mouth.style.background = "red";
+    mouth.style.borderRadius = "3px";
+    mouth.style.top = "60px";
+    mouth.style.left = "35px";
+    container.appendChild(mouth);
+
+    // Mouvement vertical aléatoire
     let direction = 1;
     setInterval(() => {
-      let bottom = parseFloat(img.style.bottom);
+      let bottom = parseFloat(container.style.bottom);
       if(bottom > 200) direction = -1;
       if(bottom < 20) direction = 1;
-      img.style.bottom = `${bottom + direction*1.5}px`;
-      img.style.transform = `rotate(${Math.sin(Date.now()/200)*5}deg)`;
+      container.style.bottom = `${bottom + direction*1.5}px`;
+      container.style.transform = `rotate(${Math.sin(Date.now()/200)*5}deg)`;
     }, 30);
 
-    return img;
+    // Clignement yeux
+    setInterval(() => {
+      eyes.style.height = eyes.style.height === "8px" ? "2px" : "8px";
+    }, 1000 + Math.random()*2000);
+
+    return { container, mouth, img };
   }
 
-  // Fait parler l'animal avec voix cartoon et bouche qui bouge
-  function speakAnimal(src, delay = 0){
+  function speakAnimal(src, el, delay = 0){
     if(!animauxVoix[src]) return;
     setTimeout(() => {
       const voice = animauxVoix[src];
@@ -56,18 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
       utter.rate = voice.rate;
       window.speechSynthesis.speak(utter);
 
-      const imgs = Array.from(preview.querySelectorAll("img"));
-      const animalImg = imgs.find(i => i.src.includes(src));
-      if(!animalImg) return;
-
       let mouthOpen = false;
       const mouthInterval = setInterval(() => {
-        animalImg.style.transform = `scaleY(${mouthOpen ? 1 : 0.8}) rotate(${Math.sin(Date.now()/200)*5}deg)`;
+        el.mouth.style.height = mouthOpen ? "6px" : "2px";
         mouthOpen = !mouthOpen;
-      }, 300);
+      }, 200);
 
-      setTimeout(() => clearInterval(mouthInterval), voice.text.length * 400);
-
+      setTimeout(() => clearInterval(mouthInterval), voice.text.length*400);
     }, delay);
   }
 
@@ -78,18 +103,27 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.style.backgroundImage = `url(${window.selectedBackground})`;
     preview.style.backgroundSize = "cover";
     preview.style.backgroundPosition = "center";
+    preview.style.position = "relative";
 
-    // Dessins de l'enfant
+    const allElements = [];
+
+    // Dessins enfant
     window.dessins.forEach((src, i) => {
-      const el = createAnimal(src, i);
-      preview.appendChild(el);
+      const el = createAnimalElement(src, i);
+      preview.appendChild(el.container);
+      allElements.push({src, el});
     });
 
     // Cartes animaux
     window.selectedCartes.forEach((src, i) => {
-      const el = createAnimal(src, i + window.dessins.length);
-      preview.appendChild(el);
-      speakAnimal(src, i * 1500);
+      const el = createAnimalElement(src, i + window.dessins.length);
+      preview.appendChild(el.container);
+      allElements.push({src, el});
+    });
+
+    // Faire parler chaque animal avec décalage
+    allElements.forEach((item, i) => {
+      speakAnimal(item.src, item.el, i*1500);
     });
   });
 
