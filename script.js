@@ -7,12 +7,13 @@ const cartesSection = document.getElementById('cartes-section');
 
 // Liste complète des cartes animaux
 const cartesAnimaux = [
-  "cerf.png","chat.png","cheval.png","chien.png",
-  "dauphin.png","ecureuil.png","elephant.png","girafe.PNG",
-  "guepard.png","lion.png","loup.png","mouton.png",
-  "otarie.png","ours.png","pieuvre.png","poisson.png",
-  "poule.png","poussin.png","renard.png","requin.png",
-  "singe.png","tortue.png","vache.png","zebre.png"
+  "chat.png","cheval.png","chien.png","poule.png",
+  "poussin.png","vache.png","mouton.png",
+  "ours.png","cerf.png","renard.png","loup.png","ecureuil.png", 
+  "pieuvre.png","poisson.png","tortue.png",
+  "requin.png","dauphin.png","otarie.png",
+  "singe.png","zebre.png","elephant.png",
+  "girafe.png","guepard.png","lion.png",
 ];
 
 // Sélection du mode
