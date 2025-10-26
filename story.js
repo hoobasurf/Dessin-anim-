@@ -1,117 +1,84 @@
-// story.js — moteur complet d'animation et voix cartoon
+// story.js — moteur complet d'animation + voix cartoon
+
 document.addEventListener("DOMContentLoaded", () => {
 
-  // mapping animal -> voix
-  const animalVoix = {
-    "cochon.png": { rate: 0.8, pitch: 0.5 },
-    "chat.png": { rate: 1.5, pitch: 1.5 },
-    "cheval.png": { rate: 0.7, pitch: 1.2 },
-    "chien.png": { rate: 1, pitch: 1 },
-    "vache.png": { rate: 0.6, pitch: 0.6 },
-    "poule.png": { rate: 1.2, pitch: 1.4 },
-    "poussin.png": { rate: 1.5, pitch: 1.6 },
-    "lion.png": { rate: 0.8, pitch: 0.9 },
-    "tigre.png": { rate: 0.9, pitch: 1 },
-    "zebre.png": { rate: 0.8, pitch: 1.1 },
-    "elephant.png": { rate: 0.5, pitch: 0.5 },
-    "girafe.PNG": { rate: 0.6, pitch: 0.6 },
-    "ours.png": { rate: 0.7, pitch: 0.5 },
-    "loup.png": { rate: 0.9, pitch: 1 },
-    "renard.png": { rate: 1.2, pitch: 1.3 },
-    "cerf.png": { rate: 1, pitch: 1 },
-    "dauphin.png": { rate: 1.2, pitch: 1.5 },
-    "poisson.png": { rate: 1.5, pitch: 1.8 },
-    "pieuvre.png": { rate: 1.3, pitch: 1.5 },
-    "tortue.png": { rate: 0.5, pitch: 0.5 },
-    "otarie.png": { rate: 1, pitch: 1 },
-    "singe.png": { rate: 1.8, pitch: 1.5 },
-    "requin.png": { rate: 0.8, pitch: 0.9 },
-    "ecureuil.png": { rate: 1.5, pitch: 1.7 },
-    "guepard.png": { rate: 1.2, pitch: 1.2 }
+  if(!window.dessins) window.dessins = [];
+  if(!window.selectedCartes) window.selectedCartes = [];
+  if(!window.selectedBackground) window.selectedBackground = null;
+
+  const preview = document.getElementById("preview-container");
+  const generateBtn = document.getElementById("generate-story");
+
+  // configuration des animaux et voix
+  const animauxVoix = {
+    "cochon.png": { pitch: 0.6, rate: 0.8, text: "Groin groin !" },
+    "chat.png": { pitch: 1.5, rate: 1.8, text: "Miaou !" },
+    "cheval.png": { pitch: 0.8, rate: 0.7, text: "Hiiiii !" },
+    "chien.png": { pitch: 1.2, rate: 1.2, text: "Ouaf !" },
+    "vache.png": { pitch: 0.5, rate: 0.7, text: "Meuh !" },
+    "mouton.png": { pitch: 1.0, rate: 1.0, text: "Bêê !" },
+    "poule.png": { pitch: 1.2, rate: 1.4, text: "Cot cot !" },
+    "poussin.png": { pitch: 1.8, rate: 2.0, text: "Piou piou !" },
+    "lion.png": { pitch: 0.8, rate: 0.8, text: "Rooooar !" },
+    "zebre.png": { pitch: 1.0, rate: 0.9, text: "Hiii !" },
+    "elephant.png": { pitch: 0.4, rate: 0.7, text: "Brrr !" },
+    "girafe.png": { pitch: 1.0, rate: 1.0, text: "Hmm !" },
+    // ajouter les autres animaux ici
   };
 
-  const genBtn = document.getElementById("generate-story");
-  genBtn.addEventListener("click", startStory);
+  function createAnimalElement(src, index) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.style.position = "absolute";
+    img.style.width = "90px";
+    img.style.bottom = `${Math.random() * 150}px`;
+    img.style.left = `${50 + index * 120}px`;
+    img.dataset.index = index;
 
-  function startStory() {
-    const preview = document.getElementById("preview-container");
+    // animation haut-bas + rotation + clignement yeux simple
+    let direction = 1;
+    setInterval(() => {
+      let bottom = parseFloat(img.style.bottom);
+      if(bottom > 200) direction = -1;
+      if(bottom < 20) direction = 1;
+      img.style.bottom = `${bottom + direction*1.5}px`;
+      img.style.transform = `rotate(${Math.sin(Date.now()/200)*5}deg)`;
+    }, 30);
+
+    return img;
+  }
+
+  function speakAnimal(src) {
+    if(!animauxVoix[src]) return;
+    const voice = animauxVoix[src];
+    const utter = new SpeechSynthesisUtterance(voice.text);
+    utter.pitch = voice.pitch;
+    utter.rate = voice.rate;
+    window.speechSynthesis.speak(utter);
+  }
+
+  generateBtn.addEventListener("click", () => {
+    if(!window.selectedBackground) return alert("Choisis un fond !");
     preview.innerHTML = "";
-    preview.style.position = "relative";
-    preview.style.overflow = "hidden";
-
-    // fond
-    const bg = window.selectedBackground || "savane.jpg";
-    preview.style.backgroundImage = `url(${bg})`;
+    preview.style.backgroundImage = `url(${window.selectedBackground})`;
     preview.style.backgroundSize = "cover";
     preview.style.backgroundPosition = "center";
 
-    // mélanger dessins + cartes
-    const animaux = [...(window.dessins || []), ...(window.selectedCartes || [])];
-
-    // créer images sur fond
-    animaux.forEach((src, idx) => {
-      const img = document.createElement("img");
-      img.src = src;
-      img.style.position = "absolute";
-      img.style.width = "100px";
-      img.style.bottom = "0px";
-      img.style.left = `${50 + idx * 110}px`;
-      preview.appendChild(img);
-
-      animateAnimal(img, src);
+    // Dessins de l'enfant
+    window.dessins.forEach((src, i) => {
+      const el = createAnimalElement(src, i);
+      preview.appendChild(el);
+      // dessins animés muets par défaut
     });
-  }
 
-  function animateAnimal(img, src) {
-    let direction = 1; // 1 = monter, -1 = descendre
-    let pos = 0; // position relative
-    const max = 80; // hauteur max
+    // Cartes animaux
+    window.selectedCartes.forEach((src, i) => {
+      const el = createAnimalElement(src, i + window.dessins.length);
+      preview.appendChild(el);
 
-    setInterval(() => {
-      pos += direction * 1; // vitesse
-      if(pos >= max) direction = -1;
-      if(pos <= 0) direction = 1;
-      img.style.bottom = `${pos}px`;
-    }, 30);
-
-    // voix
-    if(animalVoix[src]) {
-      const utter = new SpeechSynthesisUtterance(getPhrase(src));
-      utter.rate = animalVoix[src].rate;
-      utter.pitch = animalVoix[src].pitch;
-      speechSynthesis.speak(utter);
-    }
-  }
-
-  function getPhrase(src) {
-    switch(src) {
-      case "cochon.png": return "Groink groink !";
-      case "chat.png": return "Miaou miaou !";
-      case "cheval.png": return "Hiiii haaa !";
-      case "chien.png": return "Ouaf ouaf !";
-      case "vache.png": return "Meuh !";
-      case "poule.png": return "Cot cot !";
-      case "poussin.png": return "Piiip piiip !";
-      case "lion.png": return "Roaaar !";
-      case "tigre.png": return "Grrr !";
-      case "zebre.png": return "Hiiii !";
-      case "elephant.png": return "Tooooot !";
-      case "girafe.PNG": return "Mmmm !";
-      case "ours.png": return "Grrrr !";
-      case "loup.png": return "Ahouuu !";
-      case "renard.png": return "Kikiki !";
-      case "cerf.png": return "Brrr !";
-      case "dauphin.png": return "Siff siff !";
-      case "poisson.png": return "Bloup bloup !";
-      case "pieuvre.png": return "Squiii !";
-      case "tortue.png": return "Toc toc !";
-      case "otarie.png": return "Hiiii !";
-      case "singe.png": return "Ououou !";
-      case "requin.png": return "Groum !";
-      case "ecureuil.png": return "Tchik tchik !";
-      case "guepard.png": return "Prrr !";
-      default: return "Bip bip !";
-    }
-  }
+      // lancer voix avec délai pour chaque animal pour la séquence
+      setTimeout(() => speakAnimal(src), i * 1500);
+    });
+  });
 
 });
