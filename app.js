@@ -85,4 +85,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.dessins.forEach((src,i)=>{
       const img=document.createElement("img"); img.src=src; img.classList.add("animal");
-      img.style.bottom="0px"; img.style.left=`${10+i*120}px
+      img.style.bottom="0px"; img.style.left=`${10+i*120}px`; img.style.width="90px"; preview.appendChild(img);
+    });
+    window.selectedCartes.forEach((name,i)=>{
+      const img=document.createElement("img"); img.src=name; img.classList.add("animal");
+      img.style.bottom="0px"; img.style.left=`${300+i*120}px`; img.style.width="90px"; preview.appendChild(img);
+    });
+
+    showPage("page-preview");
+  }
+
+  function showPage(pageId){
+    document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+    document.getElementById(pageId).classList.remove("hidden");
+  }
+
+  window.removeBackground=function(imageSrc,callback){
+    const img=new Image(); img.crossOrigin="anonymous"; img.src=imageSrc;
+    img.onload=()=>{
+      const canvas=document.createElement("canvas"); canvas.width=img.width; canvas.height=img.height;
+      const ctx=canvas.getContext("2d"); ctx.drawImage(img,0,0);
+      const imageData=ctx.getImageData(0,0,canvas.width,canvas.height); const data=imageData.data;
+      for(let i=0;i<data.length;i+=4){ const r=data[i],g=data[i+1],b=data[i+2]; if(r>240 && g>240 && b>240) data[i+3]=0; }
+      ctx.putImageData(imageData,0,0); callback(canvas.toDataURL("image/png"));
+    };
+    img.onerror=()=>{ callback(imageSrc); };
+  };
+});
