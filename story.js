@@ -1,15 +1,13 @@
-// story.js — moteur complet d'animation + voix cartoon
-
+// story.js — moteur complet d'animation + voix cartoon + bouche qui bouge
 document.addEventListener("DOMContentLoaded", () => {
-
-  if(!window.dessins) window.dessins = [];
-  if(!window.selectedCartes) window.selectedCartes = [];
-  if(!window.selectedBackground) window.selectedBackground = null;
 
   const preview = document.getElementById("preview-container");
   const generateBtn = document.getElementById("generate-story");
 
-  // configuration des animaux et voix
+  if (!window.dessins) window.dessins = [];
+  if (!window.selectedCartes) window.selectedCartes = [];
+  if (!window.selectedBackground) window.selectedBackground = null;
+
   const animauxVoix = {
     "cochon.png": { pitch: 0.6, rate: 0.8, text: "Groin groin !" },
     "chat.png": { pitch: 1.5, rate: 1.8, text: "Miaou !" },
@@ -23,42 +21,56 @@ document.addEventListener("DOMContentLoaded", () => {
     "zebre.png": { pitch: 1.0, rate: 0.9, text: "Hiii !" },
     "elephant.png": { pitch: 0.4, rate: 0.7, text: "Brrr !" },
     "girafe.png": { pitch: 1.0, rate: 1.0, text: "Hmm !" },
-    // ajouter les autres animaux ici
   };
 
-  function createAnimalElement(src, index) {
+  function createAnimal(src, index, totalOffset = 0) {
     const img = document.createElement("img");
     img.src = src;
     img.style.position = "absolute";
     img.style.width = "90px";
     img.style.bottom = `${Math.random() * 150}px`;
-    img.style.left = `${50 + index * 120}px`;
-    img.dataset.index = index;
+    img.style.left = `${50 + index * 120 + totalOffset}px`;
 
-    // animation haut-bas + rotation + clignement yeux simple
+    // yeux clignement
+    img.style.transition = "transform 0.2s";
+
+    // animation haut-bas + rotation légère
     let direction = 1;
     setInterval(() => {
       let bottom = parseFloat(img.style.bottom);
-      if(bottom > 200) direction = -1;
-      if(bottom < 20) direction = 1;
-      img.style.bottom = `${bottom + direction*1.5}px`;
-      img.style.transform = `rotate(${Math.sin(Date.now()/200)*5}deg)`;
+      if (bottom > 200) direction = -1;
+      if (bottom < 20) direction = 1;
+      img.style.bottom = `${bottom + direction * 1.5}px`;
+      img.style.transform = `rotate(${Math.sin(Date.now() / 200) * 5}deg)`;
     }, 30);
 
     return img;
   }
 
-  function speakAnimal(src) {
-    if(!animauxVoix[src]) return;
-    const voice = animauxVoix[src];
-    const utter = new SpeechSynthesisUtterance(voice.text);
-    utter.pitch = voice.pitch;
-    utter.rate = voice.rate;
-    window.speechSynthesis.speak(utter);
+  function speakAnimal(src, delay = 0) {
+    if (!animauxVoix[src]) return;
+    setTimeout(() => {
+      const voice = animauxVoix[src];
+      const utter = new SpeechSynthesisUtterance(voice.text);
+      utter.pitch = voice.pitch;
+      utter.rate = voice.rate;
+      window.speechSynthesis.speak(utter);
+
+      // bouche animation (simple scaleY)
+      const imgs = Array.from(preview.querySelectorAll("img"));
+      const animalImg = imgs.find(i => i.src.includes(src));
+      if (!animalImg) return;
+      let mouthOpen = false;
+      const mouthInterval = setInterval(() => {
+        animalImg.style.transform = `scaleY(${mouthOpen ? 1 : 0.8}) rotate(${Math.sin(Date.now()/200)*5}deg)`;
+        mouthOpen = !mouthOpen;
+      }, 300);
+      setTimeout(() => clearInterval(mouthInterval), voice.text.length * 400); // durée voix
+    }, delay);
   }
 
   generateBtn.addEventListener("click", () => {
-    if(!window.selectedBackground) return alert("Choisis un fond !");
+    if (!window.selectedBackground) return alert("Choisis un fond !");
     preview.innerHTML = "";
     preview.style.backgroundImage = `url(${window.selectedBackground})`;
     preview.style.backgroundSize = "cover";
@@ -66,18 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Dessins de l'enfant
     window.dessins.forEach((src, i) => {
-      const el = createAnimalElement(src, i);
+      const el = createAnimal(src, i);
       preview.appendChild(el);
-      // dessins animés muets par défaut
     });
 
-    // Cartes animaux
+    // Cartes animaux avec séquence aléatoire
     window.selectedCartes.forEach((src, i) => {
-      const el = createAnimalElement(src, i + window.dessins.length);
+      const el = createAnimal(src, i + window.dessins.length);
       preview.appendChild(el);
 
-      // lancer voix avec délai pour chaque animal pour la séquence
-      setTimeout(() => speakAnimal(src), i * 1500);
+      speakAnimal(src, i * 1500);
     });
   });
 
