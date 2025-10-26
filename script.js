@@ -19,7 +19,7 @@ const cartesAnimaux = [
 ];
 
 // -------------------------
-// SELECTION DU MODE
+// SELECTION DU MODE (fonctionne maintenant)
 // -------------------------
 document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -33,6 +33,8 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
             importDessins.classList.remove('hidden');
         } else if(mode === 'dessins-cartes') {
             importDessins.classList.remove('hidden');
+            cartesSection.classList.remove('hidden');
+            loadCartes();
         }
     });
 });
@@ -168,14 +170,12 @@ function goPreview() {
 // ANIMATION + VOIX CARTOON
 // -------------------------
 function animateCharacter(img, animal) {
-    // Bounce simple
     img.animate([
         { transform: 'translateY(0px)' },
         { transform: 'translateY(-15px)' },
         { transform: 'translateY(0px)' }
     ], { duration: 1000 + Math.random()*500, iterations: Infinity });
 
-    // Voix TTS cartoon
     if(animal) {
         let utter = new SpeechSynthesisUtterance();
         switch(animal.toLowerCase()){
@@ -212,7 +212,7 @@ function showPage(pageId) {
 }
 
 // -------------------------
-// FONCTION SUPPRESSION FOND DES DESSINS
+// SUPPRESSION FOND DES DESSINS
 // -------------------------
 function removeBackground(imageSrc, callback) {
     const img = new Image();
@@ -229,7 +229,7 @@ function removeBackground(imageSrc, callback) {
 
         for(let i = 0; i < data.length; i += 4){
             const r = data[i], g = data[i+1], b = data[i+2];
-            if(r > 240 && g > 240 && b > 240) data[i+3] = 0; // fond transparent
+            if(r > 240 && g > 240 && b > 240) data[i+3] = 0;
         }
 
         ctx.putImageData(imageData, 0, 0);
