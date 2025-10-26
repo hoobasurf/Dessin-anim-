@@ -99,33 +99,26 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   background-size: cover;
   background-position: center;
   position: relative;
 }
 
 #preview-container img {
-  width: 100px;
+  width: 90px;
   margin: 5px;
   border-radius: 10px;
   position: absolute;
+  bottom: 0;
 }
 
-/* Animation bouche cartoon */
-.animal.bouche-anim {
-  animation: bouche-mouv 0.3s infinite;
+.bouche-anim {
+  animation: bouche 0.3s infinite;
+  transform-origin: center bottom;
 }
 
-@keyframes bouche-mouv {
-  0% {transform: scaleY(1);}
-  25% {transform: scaleY(1.3);}
-  50% {transform: scaleY(1);}
-  75% {transform: scaleY(1.2);}
-  100% {transform: scaleY(1);}
-}
-
-/* Légers mouvements de va-et-vient */
-.animal {
-  transition: transform 0.5s ease;
+@keyframes bouche {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
 }
