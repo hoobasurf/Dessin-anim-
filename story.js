@@ -1,71 +1,77 @@
-document.addEventListener("DOMContentLoaded", ()=>{
-  const genBtn=document.getElementById("generate-story");
+document.addEventListener("DOMContentLoaded", () => {
 
-  genBtn.addEventListener("click",()=>{
-    if(window.selectedBackground==null) return alert("Choisis un fond !");
-    playHistoire(window.selectedCartes.concat(window.dessins));
-  });
+  const generateBtn = document.getElementById("generate-story");
+  const preview = document.getElementById("preview-container");
 
-  async function playHistoire(animaux){
-    const preview=document.getElementById("preview-container");
-    preview.innerHTML="";
-    preview.style.backgroundImage=`url(${window.selectedBackground})`;
-    preview.style.backgroundSize="cover";
-    preview.style.backgroundPosition="center";
+  const histoires = [
+    "Aujourd'hui, {animal} se promène dans {fond} et rencontre plein d'amis.",
+    "{animal} chante une chanson et tout le monde l'écoute attentivement.",
+    "Une aventure commence quand {animal} découvre un trésor caché dans {fond}.",
+    "{animal} raconte une blague à ses amis et ils rient ensemble.",
+    "{animal} et ses copains jouent à cache-cache dans {fond}.",
+    "Dans {fond}, {animal} trouve une surprise inattendue.",
+    "C'est l'heure du goûter pour {animal} et ses amis dans {fond}.",
+    "{animal} apprend à nager dans l'eau claire de {fond}.",
+    "Un oiseau indique le chemin secret à {animal} dans {fond}.",
+    "{animal} rêve de devenir le héros de {fond}."
+  ];
 
-    const delay=ms=>new Promise(res=>setTimeout(res,ms));
-    animaux=animaux.sort(()=>0.5-Math.random());
-    const startTime=Date.now();
-    const minDuration=60*1000;
+  // voix par type d'animal
+  const voixAnimaux = {
+    "cochon": {rate:0.8, pitch:0.8, lang:'fr-FR'},
+    "chat": {rate:1.3, pitch:1.8, lang:'fr-FR'},
+    "cheval": {rate:0.9, pitch:0.7, lang:'fr-FR'},
+    "chien": {rate:1, pitch:1.2, lang:'fr-FR'},
+    "vache": {rate:0.8, pitch:0.7, lang:'fr-FR'},
+    "poule": {rate:1.2, pitch:1.5, lang:'fr-FR'},
+    "dauphin": {rate:1.1, pitch:1.7, lang:'fr-FR'},
+    "elephant": {rate:0.7, pitch:0.5, lang:'fr-FR'},
+    "lion": {rate:0.9, pitch:1.1, lang:'fr-FR'},
+    "zebre": {rate:1, pitch:1.0, lang:'fr-FR'},
+    "girafe": {rate:1, pitch:1.3, lang:'fr-FR'},
+    "ours": {rate:0.8, pitch:0.6, lang:'fr-FR'},
+    // compléter selon besoin...
+  };
 
-    while(Date.now()-startTime<minDuration){
-      for(let i=0;i<animaux.length;i++){
-        const animal=animaux[i];
-        const img=document.createElement("img"); img.src=animal; img.classList.add("animal");
-        img.style.position="absolute"; img.style.bottom=`${Math.floor(Math.random()*50)}px`; img.style.left=`${Math.floor(Math.random()*500)}px`;
-        preview.appendChild(img);
-        const texte=genererDialogue(animal);
-        await lireTexteAvecBouche(img,texte,animal);
-        animeMouvement(img); await delay(300);
+  function parler(animal, texte, imgEl) {
+    return new Promise(resolve => {
+      const synth = window.speechSynthesis;
+      const msg = new SpeechSynthesisUtterance(texte);
+
+      const voix = voixAnimaux[animal.toLowerCase()] || {rate:1, pitch:1, lang:'fr-FR'};
+      msg.rate = voix.rate;
+      msg.pitch = voix.pitch;
+      msg.lang = voix.lang;
+
+      msg.onstart = () => {
+        imgEl.classList.add("bouche-anim");
+      };
+      msg.onend = () => {
+        imgEl.classList.remove("bouche-anim");
+        resolve();
+      };
+      synth.speak(msg);
+    });
+  }
+
+  async function lancerHistoire() {
+    const animaux = Array.from(preview.querySelectorAll("img"));
+    if(animaux.length===0) return;
+
+    // chaque animal dit 1-2 phrases aléatoires
+    for(let animalEl of animaux){
+      const nom = animalEl.src.split("/").pop().split(".")[0]; // ex: chat.png => chat
+      const n = Math.floor(Math.random()*3)+1; // 1-3 phrases
+      for(let i=0;i<n;i++){
+        const h = histoires[Math.floor(Math.random()*histoires.length)];
+        const phrase = h.replace("{animal}", nom).replace("{fond}", window.selectedBackground?.split(".")[0] || "l'endroit");
+        await parler(nom, phrase, animalEl);
       }
     }
   }
 
-  function genererDialogue(animal){
-    const dialogues={
-      chat:["Miaou ! Je vais te montrer un secret de la forêt.","Regarde mes pattes agiles !"],
-      chien:["Wouf ! Suivez-moi, j’ai trouvé un trésor !","Oh oh oh, quelle aventure !"],
-      vache:["Meuh, le pré est magnifique aujourd’hui.","Regarde les fleurs colorées !"],
-      cochon:["Coucou, je joue dans la boue !","Hihi, quelle journée amusante !"],
-      cheval:["Hiii, je cours très vite !","Admirez ma crinière !"],
-      poule:["Cot cot, venez voir les poussins.","Je picore des graines rigolotes."],
-      default:["Bonjour ! Je suis un animal curieux.","Allons découvrir ce lieu !"]
-    };
-    animal=animal.toLowerCase();
-    for(const key in dialogues){ if(animal.includes(key)) { const arr=dialogues[key]; return arr[Math.floor(Math.random()*arr.length)]; } }
-    const arr=dialogues.default; return arr[Math.floor(Math.random()*arr.length)];
+  if(generateBtn){
+    generateBtn.addEventListener("click", lancerHistoire);
   }
 
-  function lireTexteAvecBouche(img,texte,animal){
-    return new Promise(res=>{
-      const utter=new SpeechSynthesisUtterance(texte);
-      if(animal.includes("chat")){utter.pitch=1.8;utter.rate=1.2;}
-      else if(animal.includes("chien")){utter.pitch=1.2;utter.rate=1;}
-      else if(animal.includes("vache")){utter.pitch=0.6;utter.rate=0.8;}
-      else if(animal.includes("cochon")){utter.pitch=0.7;utter.rate=0.8;}
-      else if(animal.includes("cheval")){utter.pitch=0.8;utter.rate=0.7;}
-      else if(animal.includes("poule")){utter.pitch=1.5;utter.rate=1.3;}
-      else{utter.pitch=1;utter.rate=1;}
-      utter.onstart=()=>img.classList.add("bouche-anim");
-      utter.onend=()=>{img.classList.remove("bouche-anim"); res();};
-      speechSynthesis.speak(utter);
-    });
-  }
-
-  function animeMouvement(img){
-    const deltaX=Math.floor(Math.random()*20-10);
-    const deltaY=Math.floor(Math.random()*10-5);
-    img.style.transition="transform 0.5s ease"; img.style.transform=`translate(${deltaX}px,${deltaY}px)`;
-    setTimeout(()=>{img.style.transform="translate(0,0)";},500);
-  }
 });
