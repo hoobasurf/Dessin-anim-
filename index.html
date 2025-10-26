@@ -1,44 +1,52 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Dessin Animé</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dessin Animé Enfant</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="container">
 
-    <div id="app">
+  <h1>Dessin Animé Enfant</h1>
 
-        <!-- PAGE 1 : CHOIX MODE -->
-        <div class="page" id="page-mode">
-            <h1>Choisis ton mode</h1>
-            <button class="btn" onclick="selectMode('drawing')">Dessin</button>
-            <button class="btn" onclick="selectMode('cards')">Cartes</button>
-            <button class="btn" onclick="selectMode('mixed')">Dessin + Cartes</button>
-        </div>
+  <!-- Sélection du mode -->
+  <div id="mode-selection" class="page">
+    <button class="mode-btn" data-mode="dessin">Importer Dessins</button>
+    <button class="mode-btn" data-mode="cartes">Choisir Cartes</button>
+  </div>
 
-        <!-- PAGE 2 : CHOIX FONDS -->
-        <div class="page hidden" id="page-background">
-            <h1>Choisis ton fond</h1>
-            <div class="grid" id="background-grid">
-                <!-- Images de fonds ajoutées ici dynamiquement -->
-            </div>
-            <button class="btn small" onclick="selectBackground('random')">Aléatoire 🎲</button>
-            <button class="btn small" onclick="goPreview()">Continuer</button>
-        </div>
+  <!-- Importation dessins -->
+  <div id="import-dessins" class="page hidden">
+    <input type="file" id="file-input" accept="image/*" multiple>
+    <div id="dessins-preview"></div>
+    <button id="next-to-cards">Suivant</button>
+  </div>
 
-        <!-- PAGE 3 : APERÇU -->
-        <div class="page hidden" id="page-preview">
-            <h1>Aperçu</h1>
-            <div id="preview-container"></div>
-            <button class="btn small" onclick="generateStory()">Créer l’histoire</button>
-        </div>
+  <!-- Choix cartes -->
+  <div id="cartes-section" class="page hidden">
+    <div id="cartes-container"></div>
+    <button id="choose-background">Choisir Fond</button>
+  </div>
 
-    </div>
+  <!-- Sélection fond -->
+  <div id="page-background" class="page hidden">
+    <h2>Choisis un fond</h2>
+    <div id="background-grid"></div>
+    <button id="random-background">Fond Aléatoire</button>
+    <button id="preview-btn">Voir Prévisualisation</button>
+  </div>
 
-    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
-    <script src="app.js"></script>
+  <!-- Prévisualisation -->
+  <div id="page-preview" class="page hidden">
+    <div id="preview-container"></div>
+    <button id="generate-story">Créer Histoire</button>
+  </div>
 
+</div>
+
+<script src="app.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
