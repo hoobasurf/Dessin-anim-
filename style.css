@@ -17,24 +17,49 @@ body {
 .page { display: block; }
 .hidden { display: none; }
 
-#dessins-preview img, #cartes-container img, #background-grid img {
+/* Dessins importés */
+#dessins-preview img {
+  width: 80px;
+  margin: 5px;
+  border-radius: 10px;
+}
+
+/* Cartes animaux */
+#cartes-container img.carte {
+  width: 80px;
+  margin: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.2s, transform 0.2s;
+}
+#cartes-container img.carte.selected {
+  border-color: #ff6600;
+  transform: scale(1.1);
+}
+
+/* Fonds */
+#background-grid img {
   width: 80px;
   margin: 5px;
   border-radius: 10px;
   cursor: pointer;
   border: 2px solid transparent;
 }
-.selected { border-color: #ff6600; }
+#background-grid img.selected {
+  border-color: #ff6600;
+}
 
+/* Prévisualisation */
 #preview-container {
   width: 100%;
   min-height: 400px;
-  background-size: cover;
-  background-position: center;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  background-size: cover;
+  background-position: center;
 }
 
 #preview-container img {
