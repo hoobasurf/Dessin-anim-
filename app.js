@@ -1,3 +1,6 @@
+// Variables globales
+let dessins = [];           // Dessins importés
+let selectedCartes = [];    // Cartes animaux sélectionnées
 let selectedBackground = null;
 
 // Jouer un son au clic (optionnel)
@@ -5,16 +8,20 @@ function playClick() {
   // document.getElementById("clickSound")?.play();
 }
 
-// Charger les options de fonds
+// -------------------------
+// SECTION FONDS
+// -------------------------
 function loadBackgroundOptions() {
   const grid = document.getElementById("background-grid");
   grid.innerHTML = "";
 
-  const backgrounds = ["ferme-1.png","savane-1.png","ocean-1.png","foret-1.png","mix"];
+  // Les fonds disponibles
+  const backgrounds = ["foret.jpg", "ferme.jpg", "ocean.jpg", "savane.jpg", "mix"];
 
   backgrounds.forEach(name => {
     const img = document.createElement("img");
-    img.src = name.includes("mix") ? "savane-1.png" : name; // aperçu du mix
+    img.src = name === "mix" ? "savane.jpg" : name; // aperçu du mix
+    img.classList.add("fond-option");
     img.onclick = () => {
       document.querySelectorAll("#background-grid img").forEach(i => i.classList.remove("selected"));
       img.classList.add("selected");
@@ -25,26 +32,34 @@ function loadBackgroundOptions() {
   });
 }
 
-// Fond aléatoire
+// Bouton fond aléatoire
 document.getElementById("random-background").addEventListener("click", () => {
-  const arr = ["ferme-1.png","savane-1.png","ocean-1.png","foret-1.png","mix"];
-  selectedBackground = arr[Math.floor(Math.random()*arr.length)];
+  const arr = ["foret.jpg", "ferme.jpg", "ocean.jpg", "savane.jpg", "mix"];
+  selectedBackground = arr[Math.floor(Math.random() * arr.length)];
   goPreview();
 });
 
-// Prévisualisation
+// Bouton Choisir Fond
+document.getElementById("choose-background").addEventListener("click", () => {
+    showPage("page-background"); // Affiche la section des fonds
+    loadBackgroundOptions();      // Charge les images des fonds
+});
+
+// -------------------------
+// SECTION PRÉVISUALISATION
+// -------------------------
 document.getElementById("preview-btn").addEventListener("click", goPreview);
 
 function goPreview() {
   if (!selectedBackground) return alert("Choisis un fond !");
-  const preview = document.getElementById("preview-container");
 
+  const preview = document.getElementById("preview-container");
   preview.innerHTML = "";
 
   // Fond mix
   if(selectedBackground === "mix") {
     preview.style.backgroundImage =
-      "url('savane-1.png'), url('foret-1.png'), url('ocean-1.png'), url('ferme-1.png')";
+      "url('savane.jpg'), url('foret.jpg'), url('ocean.jpg'), url('ferme.jpg')";
     preview.style.backgroundSize = "cover, cover, cover, cover";
     preview.style.backgroundPosition = "center, center, center, center";
   } else {
@@ -70,11 +85,16 @@ function goPreview() {
   showPage("page-preview");
 }
 
-// Générer histoire (placeholder)
+// -------------------------
+// SECTION HISTOIRE
+// -------------------------
 document.getElementById("generate-story").addEventListener("click", () => {
   alert("La petite histoire s’animera ici 📽✨ (phase 2)");
 });
 
+// -------------------------
+// UTILS
+// -------------------------
 function showPage(pageId) {
   document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
   document.getElementById(pageId).classList.remove("hidden");
