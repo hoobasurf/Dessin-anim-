@@ -1,77 +1,92 @@
+// story.js — moteur histoire et animation
 document.addEventListener("DOMContentLoaded", () => {
 
-  const generateBtn = document.getElementById("generate-story");
+  const genBtn = document.getElementById("generate-story");
   const preview = document.getElementById("preview-container");
 
-  const histoires = [
-    "Aujourd'hui, {animal} se promène dans {fond} et rencontre plein d'amis.",
-    "{animal} chante une chanson et tout le monde l'écoute attentivement.",
-    "Une aventure commence quand {animal} découvre un trésor caché dans {fond}.",
-    "{animal} raconte une blague à ses amis et ils rient ensemble.",
-    "{animal} et ses copains jouent à cache-cache dans {fond}.",
-    "Dans {fond}, {animal} trouve une surprise inattendue.",
-    "C'est l'heure du goûter pour {animal} et ses amis dans {fond}.",
-    "{animal} apprend à nager dans l'eau claire de {fond}.",
-    "Un oiseau indique le chemin secret à {animal} dans {fond}.",
-    "{animal} rêve de devenir le héros de {fond}."
+  // Liste d’histoires aléatoires (ajoute-en 50+ pour varier)
+  const stories = [
+    "Il était une fois un cochon curieux qui voulait découvrir la forêt.",
+    "Un chat malicieux partit explorer l’océan et y rencontra des poissons.",
+    "Le cheval et le chien jouaient dans la savane quand un lion est arrivé.",
+    "La vache et le mouton organisèrent une fête dans la ferme avec tous les animaux.",
+    "Le lion et le singe racontaient des secrets de la jungle aux autres animaux.",
+    "L’éléphant rencontra un dauphin près de l’océan et ils devinrent amis."
   ];
 
-  // voix par type d'animal
-  const voixAnimaux = {
-    "cochon": {rate:0.8, pitch:0.8, lang:'fr-FR'},
-    "chat": {rate:1.3, pitch:1.8, lang:'fr-FR'},
-    "cheval": {rate:0.9, pitch:0.7, lang:'fr-FR'},
-    "chien": {rate:1, pitch:1.2, lang:'fr-FR'},
-    "vache": {rate:0.8, pitch:0.7, lang:'fr-FR'},
-    "poule": {rate:1.2, pitch:1.5, lang:'fr-FR'},
-    "dauphin": {rate:1.1, pitch:1.7, lang:'fr-FR'},
-    "elephant": {rate:0.7, pitch:0.5, lang:'fr-FR'},
-    "lion": {rate:0.9, pitch:1.1, lang:'fr-FR'},
-    "zebre": {rate:1, pitch:1.0, lang:'fr-FR'},
-    "girafe": {rate:1, pitch:1.3, lang:'fr-FR'},
-    "ours": {rate:0.8, pitch:0.6, lang:'fr-FR'},
-    // compléter selon besoin...
+  // Voix personnalisées par type d’animal
+  const animalVoices = {
+    "cochon": { pitch: 0.8, rate: 0.9 },
+    "chat": { pitch: 1.5, rate: 1.3 },
+    "cheval": { pitch: 0.7, rate: 0.8 },
+    "chien": { pitch: 1.0, rate: 1.0 },
+    "vache": { pitch: 0.6, rate: 0.7 },
+    "mouton": { pitch: 1.0, rate: 1.0 },
+    "lion": { pitch: 0.9, rate: 0.9 },
+    "singe": { pitch: 1.2, rate: 1.2 },
+    "dauphin": { pitch: 1.3, rate: 1.4 },
+    "elephant": { pitch: 0.5, rate: 0.6 },
+    // Ajoute tous les animaux utilisés
   };
 
-  function parler(animal, texte, imgEl) {
-    return new Promise(resolve => {
-      const synth = window.speechSynthesis;
-      const msg = new SpeechSynthesisUtterance(texte);
+  genBtn.addEventListener("click", () => {
 
-      const voix = voixAnimaux[animal.toLowerCase()] || {rate:1, pitch:1, lang:'fr-FR'};
-      msg.rate = voix.rate;
-      msg.pitch = voix.pitch;
-      msg.lang = voix.lang;
+    preview.innerHTML = "";
+    preview.style.position = "relative";
 
-      msg.onstart = () => {
-        imgEl.classList.add("bouche-anim");
-      };
-      msg.onend = () => {
-        imgEl.classList.remove("bouche-anim");
-        resolve();
-      };
-      synth.speak(msg);
-    });
-  }
+    if(!window.selectedBackground) return alert("Choisis un fond !");
+    preview.style.backgroundImage = `url(${window.selectedBackground})`;
+    preview.style.backgroundSize = "cover";
+    preview.style.backgroundPosition = "center";
 
-  async function lancerHistoire() {
-    const animaux = Array.from(preview.querySelectorAll("img"));
-    if(animaux.length===0) return;
+    // Dessins + cartes
+    const animaux = [...window.dessins, ...window.selectedCartes];
+    if(animaux.length === 0) return alert("Pas d'animaux pour l'histoire !");
 
-    // chaque animal dit 1-2 phrases aléatoires
-    for(let animalEl of animaux){
-      const nom = animalEl.src.split("/").pop().split(".")[0]; // ex: chat.png => chat
-      const n = Math.floor(Math.random()*3)+1; // 1-3 phrases
-      for(let i=0;i<n;i++){
-        const h = histoires[Math.floor(Math.random()*histoires.length)];
-        const phrase = h.replace("{animal}", nom).replace("{fond}", window.selectedBackground?.split(".")[0] || "l'endroit");
-        await parler(nom, phrase, animalEl);
+    // Choisir une histoire aléatoire
+    const story = stories[Math.floor(Math.random() * stories.length)];
+
+    animaux.forEach((src, i) => {
+      const container = document.createElement("div");
+      container.style.position = "absolute";
+      container.style.bottom = "0";
+      container.style.left = `${50 + i*120}px`;
+      container.style.width = "100px";
+
+      // Image animal
+      const img = document.createElement("img");
+      img.src = src;
+      img.style.width = "100px";
+      container.appendChild(img);
+
+      // Yeux
+      const eye = document.createElement("div");
+      eye.className = "eye";
+      container.appendChild(eye);
+
+      // Bouche
+      const mouth = document.createElement("div");
+      mouth.className = "mouth";
+      container.appendChild(mouth);
+
+      preview.appendChild(container);
+
+      // Déterminer type d'animal par nom de fichier
+      let animalType = "chien"; // par défaut
+      for (let key in animalVoices) {
+        if(src.toLowerCase().includes(key)) animalType = key;
       }
-    }
-  }
 
-  if(generateBtn){
-    generateBtn.addEventListener("click", lancerHistoire);
-  }
+      // Synthèse vocale
+      const utter = new SpeechSynthesisUtterance(story);
+      utter.pitch = animalVoices[animalType].pitch;
+      utter.rate = animalVoices[animalType].rate;
+      utter.volume = 1.0;
+      const voices = window.speechSynthesis.getVoices();
+      if(voices.length > 0) utter.voice = voices[i % voices.length];
+      window.speechSynthesis.speak(utter);
+    });
+
+  });
 
 });
