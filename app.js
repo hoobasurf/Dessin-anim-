@@ -1,4 +1,3 @@
-// app.js — gestion UI, import dessins, cartes, fonds, prévisualisation
 document.addEventListener("DOMContentLoaded", () => {
   window.dessins = [];
   window.selectedCartes = [];
@@ -21,31 +20,27 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener('click', () => {
       const mode = btn.dataset.mode;
       modeSelection.classList.add('hidden');
-
-      if(mode === 'cartes') {
-        cartesSection.classList.remove('hidden');
-        loadCartes();
-      } else if(mode === 'dessins') {
+      if(mode === 'cartes'){
+        cartesSection.classList.remove('hidden'); loadCartes();
+      } else if(mode === 'dessins'){
         importDessins.classList.remove('hidden');
-      } else if(mode === 'dessins-cartes') {
-        importDessins.classList.remove('hidden');
-        cartesSection.classList.remove('hidden');
-        loadCartes();
+      } else if(mode === 'dessins-cartes'){
+        importDessins.classList.remove('hidden'); cartesSection.classList.remove('hidden'); loadCartes();
       }
     });
   });
 
-  // Import dessins + suppression fond
-  document.getElementById('file-input').addEventListener('change', (e) => {
+  // Import dessins (max 3)
+  document.getElementById('file-input').addEventListener('change', (e)=>{
     const files = e.target.files;
     window.dessins = [];
-    document.getElementById('dessins-preview').innerHTML = '';
+    document.getElementById('dessins-preview').innerHTML='';
     for(let i=0;i<Math.min(files.length,3);i++){
       const reader = new FileReader();
       reader.onload = (event)=>{
-        removeBackground(event.target.result, (transparentSrc)=>{
+        removeBackground(event.target.result,(transparentSrc)=>{
           window.dessins.push(transparentSrc);
-          const img = document.createElement('img');
+          const img = document.createElement("img");
           img.src = transparentSrc;
           document.getElementById('dessins-preview').appendChild(img);
         });
@@ -54,22 +49,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Bouton suivant
-  document.getElementById('next-to-cards')?.addEventListener('click', ()=>{
+  document.getElementById('next-to-cards')?.addEventListener('click',()=>{
     importDessins.classList.add('hidden');
     cartesSection.classList.remove('hidden');
     loadCartes();
   });
 
-  // Charger cartes
+  // Load cartes
   function loadCartes(){
     const container = document.getElementById("cartes-container");
-    container.innerHTML = "";
+    container.innerHTML="";
     cartesAnimaux.forEach(name=>{
       const img = document.createElement("img");
-      img.src = name;
+      img.src=name;
       img.classList.add("carte");
-      img.onclick = ()=>{
+      img.onclick=()=>{
         if(!window.selectedCartes.includes(name)) window.selectedCartes.push(name);
         else window.selectedCartes = window.selectedCartes.filter(c=>c!==name);
         img.classList.toggle("selected");
@@ -78,22 +72,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Bouton choisir fond
-  document.getElementById("choose-background")?.addEventListener("click", ()=>{
+  // Choisir fond
+  document.getElementById("choose-background")?.addEventListener("click",()=>{
     showPage("page-background");
     loadBackgroundOptions();
   });
 
-  // Charger fonds
   function loadBackgroundOptions(){
     const grid = document.getElementById("background-grid");
-    grid.innerHTML = "";
+    grid.innerHTML="";
     const backgrounds = ["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
     backgrounds.forEach(name=>{
       const img = document.createElement("img");
-      img.src = name;
+      img.src=name;
       img.classList.add("fond-option");
-      img.onclick = ()=>{
+      img.onclick=()=>{
         document.querySelectorAll("#background-grid img").forEach(i=>i.classList.remove("selected"));
         img.classList.add("selected");
         window.selectedBackground = name;
@@ -102,76 +95,68 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Fond aléatoire
-  document.getElementById("random-background")?.addEventListener("click", ()=>{
-    const arr = ["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
+  document.getElementById("random-background")?.addEventListener("click",()=>{
+    const arr=["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
     window.selectedBackground = arr[Math.floor(Math.random()*arr.length)];
     goPreview();
   });
 
+  document.getElementById("preview-btn")?.addEventListener("click",goPreview);
+
   // Preview
-  document.getElementById("preview-btn")?.addEventListener("click", goPreview);
-
   function goPreview(){
-    // si selectedBackground pas défini mais qu'il y a déjà un style, on le récupère
-    if(!window.selectedBackground){
-      const bg = document.getElementById("preview-container").style.backgroundImage;
-      if(bg) window.selectedBackground = bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
-    }
-    if(!window.selectedBackground) return alert("Choisis un fond !");
-
     const preview = document.getElementById("preview-container");
-    preview.innerHTML = "";
-    preview.style.backgroundImage = `url(${window.selectedBackground})`;
-    preview.style.backgroundSize = "cover";
-    preview.style.backgroundPosition = "center";
-    preview.style.position = "relative";
+    preview.innerHTML="";
 
-    // Dessins
+    if(!window.selectedBackground){
+      const arr=["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
+      window.selectedBackground = arr[Math.floor(Math.random()*arr.length)];
+    }
+
+    preview.style.backgroundImage=`url(${window.selectedBackground})`;
+    preview.style.backgroundSize="cover";
+    preview.style.backgroundPosition="center";
+    preview.style.position="relative";
+
     window.dessins.forEach((src,i)=>{
-      const img = document.createElement("img");
-      img.src = src;
-      img.style.position = "absolute";
-      img.style.bottom = "0";
-      img.style.left = `${10+i*120}px`;
-      img.style.width = "90px";
+      const img=document.createElement("img");
+      img.src=src;
+      img.style.position="absolute";
+      img.style.bottom="0";
+      img.style.left=`${10+i*120}px`;
+      img.style.width="90px";
       preview.appendChild(img);
     });
 
-    // Cartes
     window.selectedCartes.forEach((name,i)=>{
-      const img = document.createElement("img");
-      img.src = name;
-      img.style.position = "absolute";
-      img.style.bottom = "0";
-      img.style.left = `${300+i*120}px`;
-      img.style.width = "90px";
+      const img=document.createElement("img");
+      img.src=name;
+      img.style.position="absolute";
+      img.style.bottom="0";
+      img.style.left=`${300+i*120}px`;
+      img.style.width="90px";
       preview.appendChild(img);
     });
 
     showPage("page-preview");
   }
 
-  // Générer histoire
-  document.getElementById("generate-story")?.addEventListener("click", ()=>{
-    if(window._finalStoryEngine){
-      window._finalStoryEngine(); // story.js override
-    } else {
-      goPreview();
-      alert("Histoire moteur absent — si story.js est chargé il prendra le relais.");
-    }
+  // Bouton créer histoire
+  document.getElementById("generate-story")?.addEventListener("click",()=>{
+    if(window._finalStoryEngine) window._finalStoryEngine();
+    else goPreview();
   });
 
-  function showPage(id){
+  function showPage(pageId){
     document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-    document.getElementById(id)?.classList.remove("hidden");
+    document.getElementById(pageId)?.classList.remove("hidden");
   }
 
-  // remove background (canvas simple)
-  window.removeBackground = function(src,callback){
-    const img = new Image();
+  // Découpe fond clair
+  window.removeBackground = function(imageSrc,callback){
+    const img=new Image();
     img.crossOrigin="anonymous";
-    img.src = src;
+    img.src=imageSrc;
     img.onload=()=>{
       const canvas=document.createElement("canvas");
       canvas.width=img.width;
@@ -181,11 +166,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
       const data=imageData.data;
       for(let i=0;i<data.length;i+=4){
-        if(data[i]>240 && data[i+1]>240 && data[i+2]>240) data[i+3]=0;
+        const r=data[i],g=data[i+1],b=data[i+2];
+        if(r>240 && g>240 && b>240) data[i+3]=0;
       }
       ctx.putImageData(imageData,0,0);
       callback(canvas.toDataURL("image/png"));
     };
-    img.onerror=()=>{callback(src);}
+    img.onerror=()=>{callback(imageSrc);};
   };
+
 });
