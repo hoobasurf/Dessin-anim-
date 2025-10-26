@@ -1,10 +1,10 @@
 body {
-  font-family: sans-serif;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
-  background: #f0f0f0;
+  background: linear-gradient(120deg, #FFDEE9, #B5FFFC);
 }
 
 .container {
@@ -14,6 +14,48 @@ body {
   text-align: center;
 }
 
+h1 {
+  font-size: 2em;
+  color: #FF6F61;
+  text-shadow: 2px 2px 4px #fff;
+  margin-bottom: 30px;
+}
+
+/* Boutons mode */
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.mode-btn {
+  width: 180px;
+  height: 180px;
+  font-size: 1.3em;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.mode-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.dessin-btn { background: linear-gradient(45deg, #FFD194, #D191FF); }
+.cartes-btn { background: linear-gradient(45deg, #6FFFB0, #1CA9C9); }
+.mix-btn { background: linear-gradient(45deg, #FF9A8B, #FF6A88, #FF99AC); }
+
+/* Pages */
 .page { display: block; }
 .hidden { display: none; }
 
@@ -34,7 +76,7 @@ body {
   transition: border 0.2s, transform 0.2s;
 }
 #cartes-container img.carte.selected {
-  border-color: #ff6600;
+  border-color: #FF6F61;
   transform: scale(1.1);
 }
 
@@ -47,7 +89,7 @@ body {
   border: 2px solid transparent;
 }
 #background-grid img.selected {
-  border-color: #ff6600;
+  border-color: #FF6F61;
 }
 
 /* Prévisualisation */
