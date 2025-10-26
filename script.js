@@ -1,23 +1,20 @@
 // Variables
-let mode = '';
 let dessins = [];
-let selectedFond = null;
 let selectedCartes = [];
 
 // Écrans
 const modeSelection = document.getElementById('mode-selection');
 const importDessins = document.getElementById('import-dessins');
 const cartesSection = document.getElementById('cartes-section');
-const storySection = document.getElementById('story-section');
 
 // Mode selection
 document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        mode = btn.dataset.mode;
+        const mode = btn.dataset.mode;
         modeSelection.classList.add('hidden');
-
         if(mode === 'cartes') {
             cartesSection.classList.remove('hidden');
+            loadCartes();
         } else {
             importDessins.classList.remove('hidden');
         }
@@ -41,9 +38,36 @@ document.getElementById('file-input').addEventListener('change', (e) => {
     }
 });
 
+// Bouton suivant
 document.getElementById('next-to-cards').addEventListener('click', () => {
     importDessins.classList.add('hidden');
     cartesSection.classList.remove('hidden');
+    loadCartes();
 });
 
-// TODO : Charger les images des fonds et cartes, drag & drop, générer histoire animée
+// Liste complète des cartes animaux
+const cartesAnimaux = [
+  "cerf.png","chat.png","cheval.png","chien.png",
+  "dauphin.png","ecureuil.png","elephant.png","girafe.PNG",
+  "guepard.png","lion.png","loup.png","mouton.png",
+  "otarie.png","ours.png","pieuvre.png","poisson.png",
+  "poule.png","poussin.png","renard.png","requin.png",
+  "singe.png","tortue.png","vache.png","zebre.png"
+];
+
+// Charger cartes
+function loadCartes() {
+    const container = document.getElementById("cartes-container");
+    container.innerHTML = "";
+    cartesAnimaux.forEach(name => {
+        const img = document.createElement("img");
+        img.src = name;
+        img.classList.add("carte");
+        img.onclick = () => {
+            if(!selectedCartes.includes(name)) selectedCartes.push(name);
+            else selectedCartes = selectedCartes.filter(c => c!==name);
+            img.classList.toggle("selected");
+        }
+        container.appendChild(img);
+    });
+}
