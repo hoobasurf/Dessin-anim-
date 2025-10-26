@@ -21,7 +21,6 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* Boutons mode */
 .button-grid {
   display: flex;
   flex-wrap: wrap;
@@ -45,80 +44,85 @@ h1 {
   align-items: center;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
-
-.mode-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-
+.mode-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
 .dessin-btn { background: linear-gradient(45deg, #FFD194, #D191FF); }
 .cartes-btn { background: linear-gradient(45deg, #6FFFB0, #1CA9C9); }
 .mix-btn { background: linear-gradient(45deg, #FF9A8B, #FF6A88, #FF99AC); }
 
-/* Pages */
 .page { display: block; }
 .hidden { display: none; }
 
-/* Dessins importés */
-#dessins-preview img {
-  width: 80px;
-  margin: 5px;
+#dessins-preview img,
+#cartes-container img.carte,
+#background-grid img,
+#preview-container img {
   border-radius: 10px;
+  margin: 5px;
 }
 
-/* Cartes animaux */
 #cartes-container img.carte {
   width: 80px;
-  margin: 5px;
-  border-radius: 10px;
   cursor: pointer;
   border: 2px solid transparent;
   transition: border 0.2s, transform 0.2s;
 }
-#cartes-container img.carte.selected {
-  border-color: #FF6F61;
-  transform: scale(1.1);
-}
+#cartes-container img.carte.selected { border-color: #FF6F61; transform: scale(1.1); }
 
-/* Fonds */
 #background-grid img {
   width: 80px;
-  margin: 5px;
-  border-radius: 10px;
   cursor: pointer;
   border: 2px solid transparent;
 }
-#background-grid img.selected {
-  border-color: #FF6F61;
-}
+#background-grid img.selected { border-color: #FF6F61; }
 
-/* Prévisualisation */
 #preview-container {
   width: 100%;
   min-height: 400px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   background-size: cover;
   background-position: center;
   position: relative;
 }
 
 #preview-container img {
-  width: 90px;
-  margin: 5px;
-  border-radius: 10px;
+  width: 100px;
   position: absolute;
-  bottom: 0;
 }
 
-.bouche-anim {
-  animation: bouche 0.3s infinite;
-  transform-origin: center bottom;
+/* Animation bouche */
+.mouth {
+  width: 40px;
+  height: 20px;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%) scaleY(0.5);
+  animation: talk 0.4s infinite;
 }
 
-@keyframes bouche {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.5); }
+@keyframes talk {
+  0%, 100% { transform: translateX(-50%) scaleY(0.5); }
+  50% { transform: translateX(-50%) scaleY(1); }
+}
+
+/* Animation yeux */
+.eye {
+  width: 12px;
+  height: 12px;
+  background: black;
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: blink 3s infinite;
+}
+@keyframes blink {
+  0%, 90%, 100% { transform: translateX(-50%) scaleY(1); }
+  95% { transform: translateX(-50%) scaleY(0.1); }
 }
