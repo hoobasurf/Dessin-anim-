@@ -3,50 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Histoire Animée</title>
+    <title>Mini Dessin Animé</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Mon Histoire Animée 🌈</h1>
-    </header>
 
-    <main>
-        <!-- Écran 1 : Choix du mode -->
-        <section id="mode-selection">
-            <button class="mode-btn" data-mode="dessins">✏️ Mes dessins</button>
-            <button class="mode-btn" data-mode="dessins-cartes">✏️+🃏 Dessins + cartes</button>
-            <button class="mode-btn" data-mode="cartes">🃏 Cartes uniquement</button>
-        </section>
+    <div id="app">
 
-        <!-- Écran 2 : Import dessins -->
-        <section id="import-dessins" class="hidden">
-            <h2>Importer 1 à 3 dessins</h2>
-            <input type="file" id="file-input" accept="image/*" multiple>
-            <div id="dessins-preview"></div>
-            <button id="next-to-cards">Suivant →</button>
-        </section>
+        <!-- PAGE 1 : CHOIX MODE -->
+        <div class="page" id="page-mode">
+            <h1>Choisis ton mode</h1>
+            <button class="btn" onclick="selectMode('drawing')">Dessin</button>
+            <button class="btn" onclick="selectMode('cards')">Cartes</button>
+            <button class="btn" onclick="selectMode('mixed')">Dessin + Cartes</button>
+        </div>
 
-        <!-- Écran 3 : Table des cartes et fonds -->
-        <section id="cartes-section" class="hidden">
-            <h2>Choisis ton fond et tes cartes</h2>
-            <div id="fonds-container"></div>
-            <div id="cartes-container"></div>
-            <div id="panier">
-                <h3>Cartes choisies : <span id="panier-count">0</span>/10</h3>
+        <!-- PAGE 2 : CHOIX FONDS -->
+        <div class="page hidden" id="page-background">
+            <h1>Choisis ton fond</h1>
+            <div class="grid" id="background-grid">
+                <!-- Images de fonds ajoutées ici dynamiquement -->
             </div>
-            <button id="generate-story">Générer l’histoire</button>
-        </section>
+            <button class="btn small" onclick="selectBackground('random')">Aléatoire 🎲</button>
+            <button class="btn small" onclick="goPreview()">Continuer</button>
+        </div>
 
-        <!-- Écran 4 : Histoire animée -->
-        <section id="story-section" class="hidden">
-            <h2>Ton histoire animée ✨</h2>
-            <div id="story-canvas"></div>
-            <button id="replay">Rejouer</button>
-            <button id="home">Retour au menu</button>
-        </section>
-    </main>
+        <!-- PAGE 3 : APERÇU -->
+        <div class="page hidden" id="page-preview">
+            <h1>Aperçu</h1>
+            <div id="preview-container"></div>
+            <button class="btn small" onclick="generateStory()">Créer l’histoire</button>
+        </div>
 
-    <script src="script.js"></script>
+    </div>
+
+    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+    <script src="app.js"></script>
+
 </body>
 </html>
