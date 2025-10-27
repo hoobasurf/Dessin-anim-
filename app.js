@@ -1,9 +1,7 @@
-// app.js — UI, import dessins, cartes, fonds, preview (prêt à utiliser)
 document.addEventListener("DOMContentLoaded", () => {
   window.dessins = [];
   window.selectedCartes = [];
   window.selectedBackground = null;
-  window.maxAnimaux = 5; // limite
 
   const modeSelection = document.getElementById('mode-selection');
   const importDessins = document.getElementById('import-dessins');
@@ -17,174 +15,133 @@ document.addEventListener("DOMContentLoaded", () => {
     "elephant.png","girafe.PNG","guepard.png","lion.png"
   ];
 
-  // Mode buttons
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const mode = btn.dataset.mode;
-      document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
-      if(mode === 'dessins') importDessins.classList.remove('hidden');
-      else if(mode === 'cartes') { cartesSection.classList.remove('hidden'); loadCartes(); }
-      else { importDessins.classList.remove('hidden'); cartesSection.classList.remove('hidden'); loadCartes(); }
+      modeSelection.classList.add('hidden');
+
+      if(mode === 'cartes'){
+        cartesSection.classList.remove('hidden');
+        loadCartes();
+      } else if(mode === 'dessins'){
+        importDessins.classList.remove('hidden');
+      } else if(mode === 'dessins-cartes'){
+        importDessins.classList.remove('hidden');
+        cartesSection.classList.remove('hidden');
+        loadCartes();
+      }
     });
   });
 
-  // Import dessins (max 3)
   document.getElementById('file-input').addEventListener('change', (e) => {
-    const files = Array.from(e.target.files || []);
+    const files = e.target.files;
     window.dessins = [];
-    const preview = document.getElementById('dessins-preview');
-    preview.innerHTML = '';
-    files.slice(0,3).forEach(f => {
+    document.getElementById('dessins-preview').innerHTML = '';
+
+    for(let i=0; i<Math.min(files.length, 3); i++){
       const reader = new FileReader();
-      reader.onload = (ev) => {
-        window.dessins.push(ev.target.result); // dataURL
-        const img = document.createElement('img'); img.src = ev.target.result;
-        preview.appendChild(img);
+      reader.onload = (event) => {
+        const img = document.createElement('img');
+        img.src = event.target.result;
+        window.dessins.push(event.target.result);
+        document.getElementById('dessins-preview').appendChild(img);
       };
-      reader.readAsDataURL(f);
-    });
+      reader.readAsDataURL(files[i]);
+    }
   });
 
-  // next to cards
   document.getElementById('next-to-cards').addEventListener('click', () => {
     importDessins.classList.add('hidden');
     cartesSection.classList.remove('hidden');
     loadCartes();
   });
 
-  // load cartes with selection cap
   function loadCartes(){
     const container = document.getElementById("cartes-container");
     container.innerHTML = "";
     cartesAnimaux.forEach(name => {
       const img = document.createElement("img");
       img.src = name;
-      img.className = 'carte';
-      img.alt = name;
-      img.addEventListener('click', () => {
-        const idx = window.selectedCartes.indexOf(name);
-        if(idx !== -1){
-          window.selectedCartes.splice(idx,1);
-          img.classList.remove('selected');
-        } else {
-          if(window.selectedCartes.length >= window.maxAnimaux){
-            alert(`Tu peux sélectionner au maximum ${window.maxAnimaux} animaux.`);
-            return;
-          }
-          window.selectedCartes.push(name);
-          img.classList.add('selected');
-        }
-      });
+      img.classList.add("carte");
+      img.onclick = () => {
+        if(!window.selectedCartes.includes(name)) window.selectedCartes.push(name);
+        else window.selectedCartes = window.selectedCartes.filter(c => c!==name);
+        img.classList.toggle("selected");
+      };
       container.appendChild(img);
     });
   }
 
-  // choose background (selection visible immediately)
-  document.getElementById('choose-background').addEventListener('click', () => {
-    document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
-    document.getElementById('page-background').classList.remove('hidden');
-    loadBackgroundOptions();
-  });
+  const chooseBgBtn = document.getElementById("choose-background");
+  if(chooseBgBtn){
+    chooseBgBtn.addEventListener("click", () => {
+      showPage("page-background");
+      loadBackgroundOptions();
+    });
+  }
 
   function loadBackgroundOptions(){
-    const grid = document.getElementById('background-grid');
-    grid.innerHTML = '';
-    const backgrounds = ['foret.jpg','ferme.jpg','ocean.jpg','savane.jpg'];
+    const grid = document.getElementById("background-grid");
+    grid.innerHTML = "";
+    const backgrounds = ["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
     backgrounds.forEach(name => {
-      const img = document.createElement('img');
+      const img = document.createElement("img");
       img.src = name;
-      img.alt = name;
-      img.addEventListener('click', () => {
-        // visual selection immediately
-        document.querySelectorAll('#background-grid img').forEach(i=>i.classList.remove('selected'));
-        img.classList.add('selected');
+      img.classList.add("fond-option");
+      img.onclick = () => {
+        document.querySelectorAll("#background-grid img").forEach(i => i.classList.remove("selected"));
+        img.classList.add("selected");
         window.selectedBackground = name;
-      });
+      };
       grid.appendChild(img);
     });
   }
 
-  // random background button
-  document.getElementById('random-background').addEventListener('click', () => {
-    const arr = ['foret.jpg','ferme.jpg','ocean.jpg','savane.jpg'];
+  document.getElementById("random-background").addEventListener("click", () => {
+    const arr = ["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
     window.selectedBackground = arr[Math.floor(Math.random()*arr.length)];
-    // reflect selection visually
-    const gridImgs = document.querySelectorAll('#background-grid img');
-    gridImgs.forEach(i=> i.classList.remove('selected'));
-    const found = Array.from(gridImgs).find(i => i.src.includes(window.selectedBackground));
-    if(found) found.classList.add('selected');
     goPreview();
   });
 
-  // preview button
-  document.getElementById('preview-btn').addEventListener('click', goPreview);
+  document.getElementById("preview-btn").addEventListener("click", goPreview);
 
   function goPreview(){
-    if(!window.selectedBackground){
-      alert('Choisis un fond !');
-      return;
-    }
-
-    const preview = document.getElementById('preview-container');
-    preview.innerHTML = '';
+    if(!window.selectedBackground) return alert("Choisis un fond !");
+    const preview = document.getElementById("preview-container");
+    preview.innerHTML = "";
     preview.style.backgroundImage = `url(${window.selectedBackground})`;
-    preview.style.backgroundSize = 'cover';
-    preview.style.backgroundPosition = 'center';
-    preview.style.position = 'relative';
+    preview.style.backgroundSize = "cover";
+    preview.style.backgroundPosition = "center";
+    preview.style.position = "relative";
 
-    // positions (max 5)
-    const positions = [20,140,260,380,500];
-
-    // combine drawings (data URLs) and selected cartes; keep order: dessins first then cartes
-    const items = [];
-    window.dessins.slice(0,3).forEach(src => items.push({src, type:'dessin'}));
-    window.selectedCartes.slice(0,5).forEach(name => items.push({src:name, type:'card'}));
-
-    const displayed = items.slice(0,5); // cap 5
-
-    displayed.forEach((it, i) => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'char-wrapper';
-      wrapper.style.position = 'absolute';
-      wrapper.style.left = `${positions[i]}px`;
-      wrapper.style.bottom = '10px';
-      wrapper.style.width = '100px';
-      wrapper.style.pointerEvents = 'none';
-
-      const img = document.createElement('img');
-      img.src = it.src;
-      img.style.width = '100%';
-      img.dataset.type = it.type;
-      wrapper.appendChild(img);
-
-      // mouth overlay (hidden until speaking)
-      const mouth = document.createElement('div');
-      mouth.className = 'mouth-overlay';
-      mouth.style.display = 'none';
-      wrapper.appendChild(mouth);
-
-      // eyes overlay
-      const eyes = document.createElement('div');
-      eyes.className = 'eyes-overlay';
-      wrapper.appendChild(eyes);
-
-      preview.appendChild(wrapper);
+    window.dessins.forEach((src, i) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.style.left = `${10 + i*120}px`;
+      img.style.bottom = "0";
+      img.style.width = "90px";
+      preview.appendChild(img);
     });
 
-    // show preview page
-    document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
-    document.getElementById('page-preview').classList.remove('hidden');
+    window.selectedCartes.forEach((name, i) => {
+      const img = document.createElement("img");
+      img.src = name;
+      img.style.left = `${300 + i*120}px`;
+      img.style.bottom = "0";
+      img.style.width = "90px";
+      preview.appendChild(img);
+    });
+
+    showPage("page-preview");
   }
 
-  // generate story -> call story engine if defined, else just preview
-  const genBtn = document.getElementById('generate-story');
-  genBtn.addEventListener('click', () => {
-    if(typeof window._finalStoryEngine === 'function'){
-      window._finalStoryEngine(); // story.js will provide this
-    } else {
-      goPreview();
-      alert("Le moteur d'histoire n'est pas chargé.");
-    }
+  document.getElementById("generate-story").addEventListener("click", () => {
+    if(window.storyEngine) window.storyEngine.startStory();
   });
 
+  function showPage(pageId){
+    document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+    const el = document.getElementById(pageId);
+    if(el) el.classList.remove("hidden");
+  }
 });
