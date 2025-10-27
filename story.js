@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     "20251027_201425_8.mp3"
   ];
 
-  // pool of longer narrative sentences (variety). Can be expanded easily.
+  // pool of narrative sentences (optional visual captions — audio drives the experience)
   const STORY_SENTENCES = [
     "Aujourd'hui, une belle aventure commence.",
     "Nos amis se retrouvent pour partager un grand secret.",
@@ -27,14 +27,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     "La nuit approche doucement, mais l'aventure continue encore un peu."
   ];
 
-  // utility shuffle
-  function shuffle(arr){
-    for(let i=arr.length-1;i>0;i--){
-      const j=Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]]=[arr[j],arr[i]];
-    }
-    return arr;
-  }
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
   // main exported function that app.js will call
   window._finalStoryEngine = async function(){
@@ -71,7 +64,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     participants.forEach(p => {
       const eyes = p.wrapper.querySelector('.eyes-overlay');
       if(!eyes) return;
-      // random blink timing
       const blink = () => {
         eyes.style.opacity = '0.2';
         setTimeout(()=> eyes.style.opacity = '1', 120);
@@ -84,10 +76,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     const minDuration = 60 * 1000;
     const startTime = Date.now();
 
-    // create a narrative plan: array of (participantIndex, sentence)
-    // We'll loop participants in shuffled order and pick sentences from STORY_SENTENCES to display (optional)
-    let sentenceIdx = 0;
-
     // helper to play one participant's voice once and animate mouth for the duration
     function playVoiceForParticipant(p){
       return new Promise((resolve) => {
@@ -96,49 +84,48 @@ document.addEventListener("DOMContentLoaded", ()=>{
         audio.src = p.voiceFile;
         audio.preload = 'auto';
         audio.crossOrigin = 'anonymous';
-        // attach to DOM so browsers allow control
         document.body.appendChild(audio);
 
         const mouth = p.wrapper.querySelector('.mouth-overlay');
-        // ensure mouth visible
         if(mouth) mouth.style.display = 'block';
-
-        // animate mouth while playing using WebAudio (level detection fallback not used) — simple looped CSS
-        if(mouth) mouth.style.transform = 'scaleY(1.0)';
         p.wrapper.classList.add('speaking');
 
-        // safety timeout in case audio fails or very short
-        let fallbackTimeout = null;
-        const cleanup = () => {
-          if(fallbackTimeout) clearTimeout(fallbackTimeout);
-          if(mouth) { mouth.style.display = 'none'; mouth.style.transform = ''; }
-          p.wrapper.classList.remove('speaking');
-          try{ audio.pause(); }catch(e){}
-          audio.remove();
-          resolve();
-        };
-
+        // animate mouth while playing using CSS animation set when playing
         audio.addEventListener('playing', () => {
-          // animate mouth rhythmically while audio plays
-          if(mouth){
-            mouth.style.animation = 'mouthTalk 180ms infinite';
-          }
+          if(mouth) mouth.style.animation = 'mouthTalk 180ms infinite';
         });
 
         audio.addEventListener('ended', () => {
-          cleanup();
+          if(mouth){ mouth.style.display = 'none'; mouth.style.animation = ''; }
+          p.wrapper.classList.remove('speaking');
+          audio.remove();
+          resolve();
         });
 
         audio.addEventListener('error', () => {
-          // fallback: animate mouth for an estimated duration ~ 1500ms
-          fallbackTimeout = setTimeout(cleanup, 1500);
+          // fallback: approximate duration
+          if(mouth) mouth.style.animation = 'mouthTalk 180ms infinite';
+          setTimeout(()=> {
+            if(mouth){ mouth.style.display = 'none'; mouth.style.animation = ''; }
+            p.wrapper.classList.remove('speaking');
+            audio.remove();
+            resolve();
+          }, 1200);
         });
 
         // play (user clicked generate so should be allowed)
-        audio.play().catch(() => {
-          // if play() rejected, still resolve after short fallback
-          fallbackTimeout = setTimeout(cleanup, 1500);
-        });
+        const playPromise = audio.play();
+        if(playPromise !== undefined){
+          playPromise.catch(()=> {
+            // autoplay blocked — resolve after short fallback
+            setTimeout(()=> {
+              if(mouth){ mouth.style.display = 'none'; mouth.style.animation = ''; }
+              p.wrapper.classList.remove('speaking');
+              audio.remove();
+              resolve();
+            }, 1200);
+          });
+        }
       });
     }
 
@@ -146,7 +133,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     while(Date.now() - startTime < minDuration){
       const order = shuffle(participants.slice()); // new order each round
       for(const p of order){
-        // optional: you can display sentence text as caption (skipped to keep only audio)
         await playVoiceForParticipant(p);
         // short pause
         await new Promise(r => setTimeout(r, 350 + Math.random()*600));
@@ -164,9 +150,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
     });
   };
 
-  // CSS keyframes injection for mouth animation (ensures present even if user CSS missing)
+  // inject keyframes just in case
   (function injectKeyframes(){
-    const css = `@keyframes mouthTalk { 0% { transform: scaleY(1); } 50% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }`;
+    const css = `@keyframes mouthTalk { 0% { transform: scaleY(1); } 50% { transform: scaleY(0.35); } 100% { transform: scaleY(1); } }`;
     const style = document.createElement('style'); style.innerHTML = css; document.head.appendChild(style);
   })();
 
