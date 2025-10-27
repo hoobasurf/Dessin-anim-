@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.dessins = [];
   window.selectedCartes = [];
   window.selectedBackground = null;
+  window.maxAnimaux = 5;
 
   const modeSelection = document.getElementById('mode-selection');
   const importDessins = document.getElementById('import-dessins');
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "elephant.png","girafe.png","guepard.png","lion.png"
   ];
 
-  // Mode buttons
+  // Mode selection
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const mode = btn.dataset.mode;
@@ -34,12 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Import dessins (max 3)
+  // Import dessins
   document.getElementById('file-input').addEventListener('change', (e) => {
     const files = e.target.files;
     window.dessins = [];
     document.getElementById('dessins-preview').innerHTML = '';
-    for(let i=0;i<Math.min(files.length,3);i++){
+
+    for(let i=0; i<Math.min(files.length, 3); i++){
       const reader = new FileReader();
       reader.onload = (event) => {
         window.dessins.push(event.target.result);
@@ -51,14 +53,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Suivant -> cartes
-  const nextBtn = document.getElementById('next-to-cards');
-  if(nextBtn) nextBtn.addEventListener('click', () => {
+  // Bouton suivant dessins->cartes
+  document.getElementById('next-to-cards').addEventListener('click', () => {
     importDessins.classList.add('hidden');
     cartesSection.classList.remove('hidden');
     loadCartes();
   });
 
+  // Charger cartes
   function loadCartes(){
     const container = document.getElementById("cartes-container");
     container.innerHTML = "";
@@ -67,22 +69,23 @@ document.addEventListener("DOMContentLoaded", () => {
       img.src = name;
       img.classList.add("carte");
       img.onclick = () => {
-        if(!window.selectedCartes.includes(name) && window.selectedCartes.length<5) window.selectedCartes.push(name);
-        else window.selectedCartes = window.selectedCartes.filter(c => c!==name);
-        img.classList.toggle("selected");
+        if(window.selectedCartes.includes(name)){
+          window.selectedCartes = window.selectedCartes.filter(c=>c!==name);
+          img.classList.remove("selected");
+        } else if(window.selectedCartes.length < window.maxAnimaux){
+          window.selectedCartes.push(name);
+          img.classList.add("selected");
+        }
       };
       container.appendChild(img);
     });
   }
 
   // Choisir fond
-  const chooseBgBtn = document.getElementById("choose-background");
-  if(chooseBgBtn){
-    chooseBgBtn.addEventListener("click", () => {
-      showPage("page-background");
-      loadBackgroundOptions();
-    });
-  }
+  document.getElementById("choose-background").addEventListener("click", () => {
+    showPage("page-background");
+    loadBackgroundOptions();
+  });
 
   function loadBackgroundOptions(){
     const grid = document.getElementById("background-grid");
@@ -93,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
       img.src = name;
       img.classList.add("fond-option");
       img.onclick = () => {
-        document.querySelectorAll("#background-grid img").forEach(i => i.classList.remove("selected"));
+        document.querySelectorAll("#background-grid img").forEach(i=>i.classList.remove("selected"));
         img.classList.add("selected");
         window.selectedBackground = name;
       };
@@ -102,18 +105,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Fond aléatoire
-  const randomBgBtn = document.getElementById("random-background");
-  if(randomBgBtn){
-    randomBgBtn.addEventListener("click", () => {
-      const arr = ["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
-      window.selectedBackground = arr[Math.floor(Math.random()*arr.length)];
-      goPreview();
-    });
-  }
+  document.getElementById("random-background").addEventListener("click", () => {
+    const arr = ["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
+    window.selectedBackground = arr[Math.floor(Math.random()*arr.length)];
+    goPreview();
+  });
 
   // Preview
-  const previewBtn = document.getElementById("preview-btn");
-  if(previewBtn) previewBtn.addEventListener("click", goPreview);
+  document.getElementById("preview-btn").addEventListener("click", goPreview);
 
   function goPreview(){
     if(!window.selectedBackground) return alert("Choisis un fond !");
@@ -122,45 +121,20 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.style.backgroundImage = `url(${window.selectedBackground})`;
     preview.style.backgroundSize = "cover";
     preview.style.backgroundPosition = "center";
-
-    // Dessins
-    window.dessins.forEach((src,i)=>{
-      const img = document.createElement("img");
-      img.src = src;
-      img.style.position="absolute";
-      img.style.bottom="0";
-      img.style.left=`${10+i*120}px`;
-      img.style.width="90px";
-      preview.appendChild(img);
-    });
-
-    // Cartes
-    window.selectedCartes.forEach((name,i)=>{
-      const img = document.createElement("img");
-      img.src = name;
-      img.style.position="absolute";
-      img.style.bottom="0";
-      img.style.left=`${300+i*120}px`;
-      img.style.width="90px";
-      preview.appendChild(img);
-    });
-
     showPage("page-preview");
   }
 
-  const genBtn = document.getElementById("generate-story");
-  if(genBtn){
-    genBtn.addEventListener("click", () => {
-      if(window._finalStoryEngine) return; 
-      goPreview();
-      alert("Histoire (moteur absent) — si story.js est présent il prendra le relais.");
-    });
-  }
+  // Générer histoire via story.js
+  document.getElementById("generate-story").addEventListener("click", () => {
+    if(window._finalStoryEngine){
+      window._finalStoryEngine();
+    } else {
+      alert("Story engine non chargé !");
+    }
+  });
 
   function showPage(pageId){
-    document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
-    const el=document.getElementById(pageId);
-    if(el) el.classList.remove("hidden");
+    document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+    document.getElementById(pageId).classList.remove("hidden");
   }
-
 });
