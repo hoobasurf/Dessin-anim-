@@ -48,99 +48,100 @@ h1 {
 }
 
 .mode-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.22);
 }
+.dessin-btn{ background:linear-gradient(45deg,#FFD194,#D191FF); }
+.cartes-btn{ background:linear-gradient(45deg,#6FFFB0,#1CA9C9); }
+.mix-btn{ background:linear-gradient(45deg,#FF9A8B,#FF6A88,#FF99AC); }
 
-.dessin-btn { background: linear-gradient(45deg, #FFD194, #D191FF); }
-.cartes-btn { background: linear-gradient(45deg, #6FFFB0, #1CA9C9); }
-.mix-btn { background: linear-gradient(45deg, #FF9A8B, #FF6A88, #FF99AC); }
+.page{ display:block; }
+.hidden{ display:none; }
 
-/* ===== Pages ===== */
-.page { display: block; }
-.hidden { display: none; }
+/* small previews */
+#dessins-preview img, #cartes-container img.carte, #background-grid img { width:80px; margin:6px; border-radius:10px; }
 
-/* ===== Dessins importés ===== */
-#dessins-preview img {
-  width: 80px;
-  margin: 5px;
-  border-radius: 10px;
-}
+/* cartes */
+#cartes-container{ display:flex; flex-wrap:wrap; justify-content:center; padding:10px; }
+#cartes-container img.carte{ cursor:pointer; border:2px solid transparent; transition:transform .15s, border .15s; }
+#cartes-container img.carte.selected{ transform:scale(1.08); border-color:#FF6F61; }
 
-/* ===== Cartes animaux ===== */
-#cartes-container img.carte {
-  width: 80px;
-  margin: 5px;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border 0.2s, transform 0.2s;
-}
-#cartes-container img.carte.selected {
-  border-color: #FF6F61;
-  transform: scale(1.1);
-}
+/* background grid */
+#background-grid{ display:flex; flex-wrap:wrap; justify-content:center; padding:10px; gap:8px; }
 
-/* ===== Fonds ===== */
-#background-grid img {
-  width: 80px;
-  margin: 5px;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 2px solid transparent;
-}
-#background-grid img.selected {
-  border-color: #FF6F61;
-}
-
-/* ===== Prévisualisation ===== */
+/* Preview container */
 #preview-container {
-  width: 100%;
-  min-height: 400px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-end;
-  background-size: cover;
-  background-position: center;
-  position: relative;
+  width:100%;
+  min-height:420px;
+  background-size:cover;
+  background-position:center;
+  position:relative;
+  border-radius:12px;
+  overflow:hidden;
+  margin:16px 0;
 }
 
-#preview-container img {
-  width: 90px;
-  margin: 5px;
+/* char wrapper */
+.char-wrapper {
+  position:absolute;
+  width:100px;
+  height:auto;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  pointer-events:none;
+}
+
+/* image inside char */
+.char-wrapper img {
+  width:100px;
+  height:auto;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.25);
+  display:block;
+}
+
+/* mouth overlay */
+.mouth-overlay {
+  width: 36px;
+  height: 12px;
+  background: #b33;
   border-radius: 10px;
-}
-
-/* ===== Animations des animaux ===== */
-.animal {
   position: absolute;
-  bottom: 0;
+  bottom: 12px;
+  left: calc(50% - 18px);
+  transform-origin: center center;
+  display: none;
+  box-shadow: inset 0 -3px 6px rgba(0,0,0,0.12);
 }
 
-.animal .mouth {
-  width: 30px;
-  height: 10px;
-  background: red;
+/* eyes overlay */
+.eyes-overlay {
+  width: 14px;
+  height: 14px;
+  background: #111;
   border-radius: 50%;
   position: absolute;
-  bottom: 10px;
-  left: 30px;
+  top: 12px;
+  left: calc(50% - 7px);
+  opacity: 1;
+  transition: opacity 120ms;
 }
 
-.animal .eyes {
-  width: 15px;
-  height: 15px;
-  background: black;
-  border-radius: 50%;
-  position: absolute;
-  top: 10px;
-  left: 20px;
+/* speaking head bob */
+.char-wrapper.speaking { animation: headBob 0.9s infinite; }
+@keyframes headBob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
 }
 
-/* Animation bouche */
-@keyframes mouthMove {
-  0% { transform: scaleY(1); }
-  50% { transform: scaleY(0.3); }
-  100% { transform: scaleY(1); }
+/* mouthTalk keyframes included for compatibility */
+@keyframes mouthTalk { 0% { transform: scaleY(1); } 50% { transform: scaleY(0.35); } 100% { transform: scaleY(1); } }
+
+/* responsive */
+@media (max-width:600px){
+  .mode-btn { width:140px; height:140px; }
+  .char-wrapper { width:86px; }
+  .char-wrapper img { width:76px; }
 }
