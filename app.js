@@ -1,4 +1,4 @@
-// app.js — UI, import dessins, cartes, fonds, preview
+// app.js — UI, import dessins, cartes, fonds, preview (prêt à utiliser)
 document.addEventListener("DOMContentLoaded", () => {
   window.dessins = [];
   window.selectedCartes = [];
@@ -111,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // reflect selection visually
     const gridImgs = document.querySelectorAll('#background-grid img');
     gridImgs.forEach(i=> i.classList.remove('selected'));
-    // mark the matching one if present in DOM
     const found = Array.from(gridImgs).find(i => i.src.includes(window.selectedBackground));
     if(found) found.classList.add('selected');
     goPreview();
@@ -183,7 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if(typeof window._finalStoryEngine === 'function'){
       window._finalStoryEngine(); // story.js will provide this
     } else {
-      // fallback: just ensure preview visible
       goPreview();
       alert("Le moteur d'histoire n'est pas chargé.");
     }
