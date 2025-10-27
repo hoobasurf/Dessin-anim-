@@ -1,5 +1,3 @@
-/* style.css — visuel enfant + bouche/yeux overlays */
-
 body {
   font-family: 'Comic Sans MS', cursive, sans-serif;
   margin: 0;
@@ -20,109 +18,114 @@ h1 {
   font-size: 2em;
   color: #FF6F61;
   text-shadow: 2px 2px 4px #fff;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-/* Buttons */
-.button-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; }
+/* Boutons mode */
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
 .mode-btn {
-  width:180px; height:180px; font-size:1.2em; border-radius:22px; border:none; color:#fff;
-  display:flex; align-items:center; justify-content:center; cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,0.18); transition:transform .18s,box-shadow .18s;
+  width: 180px;
+  height: 180px;
+  font-size: 1.3em;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
-.mode-btn:hover { transform:scale(1.05); box-shadow:0 10px 30px rgba(0,0,0,0.22); }
-.dessin-btn{ background:linear-gradient(45deg,#FFD194,#D191FF); }
-.cartes-btn{ background:linear-gradient(45deg,#6FFFB0,#1CA9C9); }
-.mix-btn{ background:linear-gradient(45deg,#FF9A8B,#FF6A88,#FF99AC); }
 
-.page{ display:block; }
-.hidden{ display:none; }
+.mode-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
 
-/* small previews */
-#dessins-preview img, #cartes-container img.carte, #background-grid img { width:80px; margin:6px; border-radius:10px; }
+.dessin-btn { background: linear-gradient(45deg, #FFD194, #D191FF); }
+.cartes-btn { background: linear-gradient(45deg, #6FFFB0, #1CA9C9); }
+.mix-btn { background: linear-gradient(45deg, #FF9A8B, #FF6A88, #FF99AC); }
 
-/* cartes */
-#cartes-container{ display:flex; flex-wrap:wrap; justify-content:center; padding:10px; }
-#cartes-container img.carte{ cursor:pointer; border:2px solid transparent; transition:transform .15s, border .15s; }
-#cartes-container img.carte.selected{ transform:scale(1.08); border-color:#FF6F61; }
+/* Pages */
+.page { display: block; }
+.hidden { display: none; }
 
-/* background grid */
-#background-grid{ display:flex; flex-wrap:wrap; justify-content:center; padding:10px; gap:8px; }
+/* Dessins importés */
+#dessins-preview img {
+  width: 80px;
+  margin: 5px;
+  border-radius: 10px;
+}
 
-/* Preview container */
+/* Cartes animaux */
+#cartes-container img.carte {
+  width: 80px;
+  margin: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.2s, transform 0.2s;
+}
+#cartes-container img.carte.selected {
+  border-color: #FF6F61;
+  transform: scale(1.1);
+}
+
+/* Fonds */
+#background-grid img {
+  width: 80px;
+  margin: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+#background-grid img.selected {
+  border-color: #FF6F61;
+}
+
+/* Prévisualisation */
 #preview-container {
-  width:100%;
-  min-height:420px;
-  background-size:cover;
-  background-position:center;
-  position:relative;
-  border-radius:12px;
-  overflow:hidden;
-  margin:16px 0;
+  width: 100%;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  position: relative;
+  background-size: cover;
+  background-position: center;
 }
 
-/* each character container (we create these in story.js) */
-.char {
-  position:absolute;
-  width:110px;
-  height:auto;
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  pointer-events:none; /* prevents accidental clicks */
+/* Animations bouche */
+.animal img.mouth {
+  position: absolute;
+  width: 20px;
+  bottom: 5px;
+  animation: mouthMove 0.5s infinite alternate;
 }
 
-/* image inside char */
-.char img {
-  width:100px;
-  height:auto;
-  border-radius:12px;
-  box-shadow:0 6px 14px rgba(0,0,0,0.25);
-  display:block;
+@keyframes mouthMove {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(1.5); }
 }
 
-/* eye overlay (two small circles grouped) */
-.eye-left, .eye-right {
-  position:absolute;
-  width:10px; height:10px; background:black; border-radius:50%;
-  top:18px;
-  transition: transform .08s;
-}
-.eye-left { left:28px; }
-.eye-right { right:28px; }
-
-/* blink animation (JS toggles scaleY) */
-.blink { transform: scaleY(0.15); }
-
-/* mouth overlay */
-.mouth {
-  position:absolute;
-  width:34px;
-  height:10px;
-  background:#b33;
-  border-radius:8px;
-  bottom:18px;
-  left:50%;
-  transform:translateX(-50%) scaleY(0.6);
-  transform-origin:center center;
-  transition: transform .08s;
-  box-shadow: inset 0 -3px 6px rgba(0,0,0,0.15);
+/* Clignement yeux */
+.animal img.eyes {
+  position: absolute;
+  width: 15px;
+  top: 5px;
+  animation: blink 3s infinite;
 }
 
-/* while speaking we enlarge mouth slightly with CSS class */
-.mouth.talk { transform: translateX(-50%) scaleY(1); }
-
-/* subtle head bob while speaking — applied to container */
-.char.talking { animation: head-bob 0.9s infinite; }
-@keyframes head-bob {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
-}
-
-/* responsive */
-@media (max-width:600px){
-  .mode-btn { width:140px; height:140px; }
-  .char { width:86px; }
-  .char img { width:76px; }
+@keyframes blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
 }
