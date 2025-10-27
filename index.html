@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dessin Animé Enfant</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="container">
+  <div class="container">
+    <h1>🎨 Mon Dessin Animé !</h1>
 
-  <h1>🎨 Mon Dessin Animé !</h1>
+    <!-- Mode selection -->
+    <div id="mode-selection" class="page">
+      <div class="button-grid">
+        <button class="mode-btn dessin-btn" data-mode="dessins">✏️ Dessin(s)</button>
+        <button class="mode-btn cartes-btn" data-mode="cartes">🐾 Cartes</button>
+        <button class="mode-btn mix-btn" data-mode="dessins-cartes">🎉 Dessin + Cartes</button>
+      </div>
+    </div>
 
-  <!-- Sélection mode -->
-  <div id="mode-selection" class="page">
-    <div class="button-grid">
-      <button class="mode-btn dessin-btn" data-mode="dessins">✏️ Dessin(s)</button>
-      <button class="mode-btn cartes-btn" data-mode="cartes">🐾 Cartes</button>
-      <button class="mode-btn mix-btn" data-mode="dessins-cartes">🎉 Dessin + Cartes</button>
+    <!-- Import dessins -->
+    <div id="import-dessins" class="page hidden">
+      <input type="file" id="file-input" accept="image/*" multiple />
+      <div id="dessins-preview"></div>
+      <button id="next-to-cards">Suivant</button>
+    </div>
+
+    <!-- Choix cartes -->
+    <div id="cartes-section" class="page hidden">
+      <div id="cartes-container"></div>
+      <button id="choose-background">Choisir Fond</button>
+    </div>
+
+    <!-- Choix fond -->
+    <div id="page-background" class="page hidden">
+      <h2>Choisis un fond</h2>
+      <div id="background-grid"></div>
+      <div class="bg-buttons">
+        <button id="random-background">Fond Aléatoire</button>
+        <button id="preview-btn">Voir Prévisualisation</button>
+      </div>
+    </div>
+
+    <!-- Prévisualisation -->
+    <div id="page-preview" class="page hidden">
+      <div id="preview-container"></div>
+      <button id="generate-story">Créer Histoire</button>
     </div>
   </div>
 
-  <!-- Importation dessins -->
-  <div id="import-dessins" class="page hidden">
-    <input type="file" id="file-input" accept="image/*" multiple>
-    <div id="dessins-preview"></div>
-    <button id="next-to-cards">Suivant</button>
-  </div>
-
-  <!-- Choix cartes -->
-  <div id="cartes-section" class="page hidden">
-    <div id="cartes-container"></div>
-    <button id="choose-background">Choisir Fond</button>
-  </div>
-
-  <!-- Sélection fond -->
-  <div id="page-background" class="page hidden">
-    <h2>Choisis un fond</h2>
-    <div id="background-grid"></div>
-    <button id="random-background">Fond Aléatoire</button>
-    <button id="preview-btn">Voir Prévisualisation</button>
-  </div>
-
-  <!-- Prévisualisation et histoire -->
-  <div id="page-preview" class="page hidden">
-    <div id="preview-container"></div>
-    <button id="generate-story">Créer Histoire</button>
-  </div>
-
-</div>
-
-<script src="app.js"></script>
-<script src="story.js"></script>
+  <script src="app.js"></script>
+  <script src="story.js"></script>
 </body>
 </html>
