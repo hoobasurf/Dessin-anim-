@@ -1,3 +1,4 @@
+/* ===== Global ===== */
 body {
   font-family: 'Comic Sans MS', cursive, sans-serif;
   margin: 0;
@@ -21,7 +22,7 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* Boutons mode */
+/* ===== Boutons mode ===== */
 .button-grid {
   display: flex;
   flex-wrap: wrap;
@@ -55,18 +56,18 @@ h1 {
 .cartes-btn { background: linear-gradient(45deg, #6FFFB0, #1CA9C9); }
 .mix-btn { background: linear-gradient(45deg, #FF9A8B, #FF6A88, #FF99AC); }
 
-/* Pages */
+/* ===== Pages ===== */
 .page { display: block; }
 .hidden { display: none; }
 
-/* Dessins importés */
+/* ===== Dessins importés ===== */
 #dessins-preview img {
   width: 80px;
   margin: 5px;
   border-radius: 10px;
 }
 
-/* Cartes animaux */
+/* ===== Cartes animaux ===== */
 #cartes-container img.carte {
   width: 80px;
   margin: 5px;
@@ -80,7 +81,7 @@ h1 {
   transform: scale(1.1);
 }
 
-/* Fonds */
+/* ===== Fonds ===== */
 #background-grid img {
   width: 80px;
   margin: 5px;
@@ -92,40 +93,54 @@ h1 {
   border-color: #FF6F61;
 }
 
-/* Prévisualisation */
+/* ===== Prévisualisation ===== */
 #preview-container {
   width: 100%;
   min-height: 400px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
-  position: relative;
   background-size: cover;
   background-position: center;
+  position: relative;
 }
 
-/* Animations bouche */
-.animal img.mouth {
+#preview-container img {
+  width: 90px;
+  margin: 5px;
+  border-radius: 10px;
+}
+
+/* ===== Animations des animaux ===== */
+.animal {
   position: absolute;
-  width: 20px;
-  bottom: 5px;
-  animation: mouthMove 0.5s infinite alternate;
+  bottom: 0;
 }
 
+.animal .mouth {
+  width: 30px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10px;
+  left: 30px;
+}
+
+.animal .eyes {
+  width: 15px;
+  height: 15px;
+  background: black;
+  border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}
+
+/* Animation bouche */
 @keyframes mouthMove {
   0% { transform: scaleY(1); }
-  100% { transform: scaleY(1.5); }
-}
-
-/* Clignement yeux */
-.animal img.eyes {
-  position: absolute;
-  width: 15px;
-  top: 5px;
-  animation: blink 3s infinite;
-}
-
-@keyframes blink {
-  0%, 90%, 100% { transform: scaleY(1); }
-  95% { transform: scaleY(0.1); }
+  50% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
 }
