@@ -1,55 +1,81 @@
-// story.js — moteur des histoires et lecture MP3
+// story.js — lecture MP3 et animation discrète des animaux
 document.addEventListener("DOMContentLoaded", () => {
+    // référence au bouton créer histoire
+    const genBtn = document.getElementById("generate-story");
+    if(!genBtn) return;
 
-  window._finalStoryEngine = true; // indique que story.js est chargé
-
-  const generateBtn = document.getElementById("generate-story");
-  generateBtn.addEventListener("click", () => {
-
+    // conteneur de prévisualisation
     const preview = document.getElementById("preview-container");
-    if(!window.selectedBackground) return alert("Choisis un fond !");
-    if(window.selectedCartes.length === 0 && window.dessins.length === 0) return alert("Choisis au moins un animal !");
 
-    // Histoires aléatoires (exemple 1)
-    const storyText = [
-      {speaker:"Narrateur", text:"Aujourd’hui, le soleil brillait dans la Forêt des Secrets. Nos amis animaux partent à l’aventure."},
-      {speaker:"Chat", text:"Hé ! Regardez là-bas ! Une grotte mystérieuse derrière les buissons."},
-      {speaker:"Chien", text:"Moi ! Attention aux racines… Oh, une feuille colorée ! Quelle couleur vois-tu, Malo ?"},
-      {speaker:"Girafe", text:"Et si on montait là-haut pour voir la forêt entière ? Les oiseaux chantent des mélodies rigolotes !"},
-      {speaker:"Singe", text:"Hahaha ! Regardez ce tronc qui bouge ! On dirait qu’il danse !"},
-      {speaker:"Éléphant", text:"Et si nous faisions une course jusqu’au ruisseau ? Attention, l’eau éclabousse !"},
-      {speaker:"Narrateur", text:"Après avoir rigolé, sauté, et exploré, nos amis découvrent enfin le trésor."},
-      {speaker:"Chien", text:"Quelle belle journée ! On a joué, exploré, et appris de nouvelles couleurs."},
-      {speaker:"Narrateur", text:"Et ainsi, la Forêt des Secrets reste un endroit magique, rempli d’aventures et de rires."}
-    ];
-
-    let currentIndex = 0;
-
-    function playNext(){
-      if(currentIndex >= storyText.length) return;
-      const part = storyText[currentIndex];
-      highlightSpeaker(part.speaker);
-
-      const audio = new Audio(`20251027_201425_1.mp3`); // ta voix MP3
-      audio.play();
-      audio.onended = () => {
-        currentIndex++;
-        setTimeout(playNext, 1200); // pause 1.2 sec entre phrases
-      };
+    // léger mouvement quand l'animal "parle"
+    function animateSpeaking(img) {
+        let scale = 1;
+        const interval = setInterval(() => {
+            scale = scale === 1 ? 1.05 : 1;
+            img.style.transform = `scale(${scale})`;
+        }, 300);
+        return interval;
     }
 
-    function highlightSpeaker(speaker){
-      const imgs = preview.querySelectorAll("img");
-      imgs.forEach(img => img.style.transform = "scale(1)");
-      // on fait un léger mouvement sur le premier animal pour indiquer qui parle
-      if(window.selectedCartes.length > 0){
-        imgs[0].style.transform = "scale(1.05)";
-      } else if(window.dessins.length > 0){
-        imgs[0].style.transform = "scale(1.05)";
-      }
-    }
+    genBtn.addEventListener("click", () => {
+        if(!window.selectedBackground) {
+            alert("Choisis un fond !");
+            return;
+        }
+        if(window.selectedCartes.length === 0 && window.dessins.length === 0) {
+            alert("Choisis au moins un animal ou dessin !");
+            return;
+        }
 
-    playNext();
-  });
+        preview.innerHTML = "";
+        preview.style.backgroundImage = `url(${window.selectedBackground})`;
+        preview.style.backgroundSize = "cover";
+        preview.style.backgroundPosition = "center";
 
+        // placer animaux sélectionnés (max 5)
+        const animals = window.selectedCartes.slice(0,5);
+        const positions = [50, 180, 310, 440, 570]; // x positions
+        const animalImgs = [];
+
+        animals.forEach((name,i) => {
+            const img = document.createElement("img");
+            img.src = name;
+            img.style.position = "absolute";
+            img.style.bottom = "0";
+            img.style.left = `${positions[i]}px`;
+            img.style.width = "90px";
+            preview.appendChild(img);
+            animalImgs.push(img);
+        });
+
+        // dessins importés
+        window.dessins.forEach((src,i) => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.style.position = "absolute";
+            img.style.bottom = "0";
+            img.style.left = `${positions[i + animals.length]}px`;
+            img.style.width = "90px";
+            preview.appendChild(img);
+            animalImgs.push(img);
+        });
+
+        // jouer le MP3
+        const audio = new Audio("laforetenchantee.mp3");
+        audio.play();
+
+        // animation légère des animaux pendant le MP3
+        const intervals = [];
+        audio.addEventListener("play", () => {
+            animalImgs.forEach(img => {
+                intervals.push(animateSpeaking(img));
+            });
+        });
+
+        // arrêter l'animation quand le MP3 se termine
+        audio.addEventListener("ended", () => {
+            intervals.forEach(interval => clearInterval(interval));
+            animalImgs.forEach(img => img.style.transform = "scale(1)");
+        });
+    });
 });
