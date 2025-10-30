@@ -95,21 +95,72 @@ h1 {
 /* Prévisualisation */
 #preview-container {
   width: 100%;
-  min-height: 400px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-end;
+  min-height: 500px;
+  display: block;
+  position: relative;
   background-size: cover;
   background-position: center;
-  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
-#preview-container img {
-  width: 90px;
-  margin: 5px;
-  border-radius: 10px;
+/* layers */
+#object-layer, #animal-layer {
   position: absolute;
-  bottom: 0;
-  transition: transform 0.2s;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* object images */
+.object {
+  position: absolute;
+  width: 120px;
+  transition: opacity 400ms ease, transform 400ms ease;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* animal images */
+.animal {
+  position: absolute;
+  bottom: 10px;
+  width: 90px;
+  transition: transform 220ms ease;
+}
+
+/* small speaking pulse (discret, pas bouche) */
+.speaking {
+  transform: scale(1.06) !important;
+}
+
+/* top UI in preview */
+#ui-top {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 40;
+  pointer-events: auto;
+}
+#ui-top button {
+  margin-left: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* story text box (for debugging/visual) */
+.story-line {
+  position: absolute;
+  left: 10px;
+  bottom: 140px;
+  background: rgba(255,255,255,0.85);
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: calc(100% - 40px);
+  font-size: 1rem;
+  display: none; /* shown by story.js when needed */
 }
