@@ -12,14 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
     "chat.png","chien.png","poule.png","poussin.png","cheval.png",
     "vache.png","mouton.png","pieuvre.png","poisson.png","tortue.png",
     "requin.png","dauphin.png","otarie.png","singe.png","zebre.png",
-    "elephant.png","girafe.PNG","guepard.png","lion.png"
+    "elephant.png","girafe.png","guepard.png","lion.png"
   ];
 
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const mode = btn.dataset.mode;
       modeSelection.classList.add('hidden');
-
       if(mode === 'cartes'){
         cartesSection.classList.remove('hidden');
         loadCartes();
@@ -37,20 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const files = e.target.files;
     window.dessins = [];
     document.getElementById('dessins-preview').innerHTML = '';
-
-    for(let i=0; i<Math.min(files.length, 3); i++){
+    for(let i=0; i<Math.min(files.length,3); i++){
       const reader = new FileReader();
       reader.onload = (event) => {
+        window.dessins.push(event.target.result);
         const img = document.createElement('img');
         img.src = event.target.result;
-        window.dessins.push(event.target.result);
         document.getElementById('dessins-preview').appendChild(img);
       };
       reader.readAsDataURL(files[i]);
     }
   });
 
-  document.getElementById('next-to-cards').addEventListener('click', () => {
+  const nextBtn = document.getElementById('next-to-cards');
+  if(nextBtn) nextBtn.addEventListener('click', () => {
     importDessins.classList.add('hidden');
     cartesSection.classList.remove('hidden');
     loadCartes();
@@ -64,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       img.src = name;
       img.classList.add("carte");
       img.onclick = () => {
+        if(window.selectedCartes.length >= 5 && !window.selectedCartes.includes(name)) return;
         if(!window.selectedCartes.includes(name)) window.selectedCartes.push(name);
         else window.selectedCartes = window.selectedCartes.filter(c => c!==name);
         img.classList.toggle("selected");
@@ -97,51 +97,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.getElementById("random-background").addEventListener("click", () => {
-    const arr = ["foret.jpg","ferme.jpg","ocean.jpg","savane.jpg"];
-    window.selectedBackground = arr[Math.floor(Math.random()*arr.length)];
-    goPreview();
-  });
-
-  document.getElementById("preview-btn").addEventListener("click", goPreview);
+  const previewBtn = document.getElementById("preview-btn");
+  if(previewBtn) previewBtn.addEventListener("click", goPreview);
 
   function goPreview(){
     if(!window.selectedBackground) return alert("Choisis un fond !");
     const preview = document.getElementById("preview-container");
     preview.innerHTML = "";
     preview.style.backgroundImage = `url(${window.selectedBackground})`;
-    preview.style.backgroundSize = "cover";
-    preview.style.backgroundPosition = "center";
-    preview.style.position = "relative";
 
-    window.dessins.forEach((src, i) => {
+    window.dessins.forEach((src,i) => {
       const img = document.createElement("img");
       img.src = src;
       img.style.left = `${10 + i*120}px`;
-      img.style.bottom = "0";
-      img.style.width = "90px";
       preview.appendChild(img);
     });
 
-    window.selectedCartes.forEach((name, i) => {
+    window.selectedCartes.forEach((name,i) => {
       const img = document.createElement("img");
       img.src = name;
       img.style.left = `${300 + i*120}px`;
-      img.style.bottom = "0";
-      img.style.width = "90px";
       preview.appendChild(img);
     });
 
     showPage("page-preview");
   }
 
-  document.getElementById("generate-story").addEventListener("click", () => {
-    if(window.storyEngine) window.storyEngine.startStory();
-  });
+  const genBtn = document.getElementById("generate-story");
+  if(genBtn){
+    genBtn.addEventListener("click", () => {
+      if(window._finalStoryEngine) return;
+      goPreview();
+      alert("Histoire (moteur absent) — story.js prendra le relais si présent.");
+    });
+  }
 
   function showPage(pageId){
     document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
     const el = document.getElementById(pageId);
     if(el) el.classList.remove("hidden");
   }
+
 });
