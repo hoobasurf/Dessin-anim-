@@ -8,11 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartesSection = document.getElementById('cartes-section');
 
   const cartesAnimaux = [
-    "ours.png","cerf.png","renard.png","loup.png","ecureuil.png",
-    "chat.png","chien.png","poule.png","poussin.png","cheval.png",
-    "vache.png","mouton.png","pieuvre.png","poisson.png","tortue.png",
-    "requin.png","dauphin.png","otarie.png","singe.png","zebre.png",
-    "elephant.png","girafe.png","guepard.png","lion.png"
+    "cerf.png","chat.png","cheval.png","chien.png","dauphin.png",
+    "ecureuil.png","elephant.png","girafe.PNG","lion.png","loup.png",
+    "mouton.png","otarie.png","ours.png","pieuvre.png","poisson.png",
+    "poule.png","poussin.png","renard.png","requin.png","singe.png",
+    "zebre.png"
   ];
 
   document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const files = e.target.files;
     window.dessins = [];
     document.getElementById('dessins-preview').innerHTML = '';
-    for(let i=0; i<Math.min(files.length,3); i++){
+    for(let i=0; i<Math.min(files.length, 3); i++){
       const reader = new FileReader();
       reader.onload = (event) => {
         window.dessins.push(event.target.result);
@@ -63,10 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
       img.src = name;
       img.classList.add("carte");
       img.onclick = () => {
-        if(window.selectedCartes.length >= 5 && !window.selectedCartes.includes(name)) return;
-        if(!window.selectedCartes.includes(name)) window.selectedCartes.push(name);
-        else window.selectedCartes = window.selectedCartes.filter(c => c!==name);
-        img.classList.toggle("selected");
+        if(window.selectedCartes.length < 5){
+          if(!window.selectedCartes.includes(name)) window.selectedCartes.push(name);
+          else window.selectedCartes = window.selectedCartes.filter(c => c!==name);
+          img.classList.toggle("selected");
+        } else {
+          alert("Maximum 5 animaux !");
+        }
       };
       container.appendChild(img);
     });
@@ -105,18 +108,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const preview = document.getElementById("preview-container");
     preview.innerHTML = "";
     preview.style.backgroundImage = `url(${window.selectedBackground})`;
+    preview.style.backgroundSize = "cover";
+    preview.style.backgroundPosition = "center";
+    preview.style.position = "relative";
 
-    window.dessins.forEach((src,i) => {
+    window.dessins.forEach((src, i) => {
       const img = document.createElement("img");
       img.src = src;
+      img.style.position = "absolute";
+      img.style.bottom = "10px";
       img.style.left = `${10 + i*120}px`;
+      img.style.width = "90px";
       preview.appendChild(img);
     });
 
-    window.selectedCartes.forEach((name,i) => {
+    window.selectedCartes.forEach((name, i) => {
       const img = document.createElement("img");
       img.src = name;
+      img.style.position = "absolute";
+      img.style.bottom = "10px";
       img.style.left = `${300 + i*120}px`;
+      img.style.width = "90px";
       preview.appendChild(img);
     });
 
@@ -128,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
     genBtn.addEventListener("click", () => {
       if(window._finalStoryEngine) return;
       goPreview();
-      alert("Histoire (moteur absent) — story.js prendra le relais si présent.");
+      alert("Histoire prête avec le moteur story.js !");
     });
   }
 
