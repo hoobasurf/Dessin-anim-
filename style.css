@@ -111,14 +111,5 @@ h1 {
   border-radius: 10px;
   position: absolute;
   bottom: 0;
-}
-
-.story-text {
-  position: absolute;
-  bottom: 10px;
-  width: 100%;
-  font-size: 1.2em;
-  color: #fff;
-  text-shadow: 2px 2px 5px #000;
-  text-align: center;
+  transition: transform 0.2s;
 }
