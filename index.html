@@ -2,42 +2,64 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Forêt Enchantée</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="app">
+    <!-- PAGE 1 : ACCUEIL -->
+    <section id="page1" class="page active">
+      <h1>🌲 La Forêt Enchantée 🌲</h1>
+      <button id="startBtn">Commencer l’aventure</button>
+    </section>
 
-  <header>
-    <h1>La Forêt Enchantée</h1>
-    <p>Choisis un décor et jusqu’à 3 animaux pour ton histoire magique !</p>
-  </header>
+    <!-- PAGE 2 : CHOIX DE L’ANIMAL -->
+    <section id="page2" class="page">
+      <h2>Choisis ton compagnon</h2>
+      <div class="choices">
+        <img src="chat.png" alt="Chat" class="animal" data-animal="chat">
+        <img src="chien.png" alt="Chien" class="animal" data-animal="chien">
+        <img src="girafe.png" alt="Girafe" class="animal" data-animal="girafe">
+      </div>
+      <button id="toDecor">Suivant</button>
+    </section>
 
-  <section id="background-select">
-    <h2>Décor</h2>
-    <div class="choices">
-      <button class="background-choice active" data-bg="foret">Forêt</button>
-      <button class="background-choice" data-bg="ocean">Océan</button>
-      <button class="background-choice" data-bg="ferme">Ferme</button>
-      <button class="background-choice" data-bg="neige">Neige</button>
-    </div>
-  </section>
+    <!-- PAGE 3 : CHOIX DU DÉCOR -->
+    <section id="page3" class="page">
+      <h2>Choisis ton décor</h2>
+      <div class="choices">
+        <img src="foret.jpg" alt="Forêt" class="decor" data-decor="foret">
+        <img src="ocean.jpg" alt="Océan" class="decor" data-decor="ocean">
+        <img src="montagne.jpg" alt="Montagne" class="decor" data-decor="montagne">
+        <img src="prairie.jpg" alt="Prairie" class="decor" data-decor="prairie">
+      </div>
+      <button id="toPreview">Suivant</button>
+    </section>
 
-  <section id="animal-select">
-    <h2>Animaux</h2>
-    <div class="choices">
-      <button class="animal-choice" data-animal="renard">Renard</button>
-      <button class="animal-choice" data-animal="lapin">Lapin</button>
-      <button class="animal-choice" data-animal="hibou">Hibou</button>
-    </div>
-  </section>
+    <!-- PAGE 4 : PRÉVISUALISATION -->
+    <section id="page4" class="page">
+      <h2>Voici ton histoire</h2>
+      <div id="preview">
+        <img id="previewAnimal" src="">
+        <img id="previewDecor" src="">
+      </div>
+      <button id="createStory">Créer mon histoire</button>
+    </section>
 
-  <section id="action">
-    <button id="generate-story">Créer mon histoire</button>
-  </section>
+    <!-- PAGE 5 : HISTOIRE -->
+    <section id="page5" class="page">
+      <h2>Ton aventure commence...</h2>
+      <div id="storyScene">
+        <img id="storyDecor" src="">
+        <img id="storyAnimal" src="">
+        <div id="objects"></div>
+      </div>
+      <audio id="storyAudio" src="laforetenchantee.mp3"></audio>
+      <button id="replayBtn">Rejouer</button>
+    </section>
+  </div>
 
-  <section id="preview-container"></section>
-
-  <script src="app.js"></script>
-  <script src="story.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
