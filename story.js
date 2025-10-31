@@ -33,7 +33,7 @@ function startStory(fond, animaux) {
   background.classList.add("fond-scene");
   preview.appendChild(background);
 
-  // Objets
+  // Objets animés
   scene.objets.forEach((obj, i) => {
     const el = document.createElement("img");
     el.src = obj;
@@ -44,15 +44,15 @@ function startStory(fond, animaux) {
 
     el.animate([
       { transform: "translateY(0px)" },
-      { transform: "translateY(-5px)" },
+      { transform: "translateY(-8px)" },
       { transform: "translateY(0px)" }
     ], {
-      duration: 3000 + Math.random() * 2000,
+      duration: 2500 + Math.random() * 1500,
       iterations: Infinity
     });
   });
 
-  // Animaux
+  // Animaux (petit mouvement discret)
   animaux.forEach((nom, i) => {
     const a = document.createElement("img");
     a.src = `${nom}.png`;
@@ -66,7 +66,7 @@ function startStory(fond, animaux) {
       { transform: "scale(1.05)" },
       { transform: "scale(1)" }
     ], {
-      duration: 1200,
+      duration: 1800,
       iterations: Infinity
     });
   });
