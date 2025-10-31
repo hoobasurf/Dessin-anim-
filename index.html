@@ -1,63 +1,43 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>La Forêt Enchantée</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>La Forêt Enchantée</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
 
-    <h1>🎨 Mon Dessin Animé !</h1>
+  <header>
+    <h1>La Forêt Enchantée</h1>
+    <p>Choisis un décor et jusqu’à 3 animaux pour ton histoire magique !</p>
+  </header>
 
-    <!-- Sélection mode -->
-    <div id="mode-selection" class="page">
-      <div class="button-grid">
-        <button class="mode-btn dessin-btn" data-mode="dessins">✏️ Dessin(s)</button>
-        <button class="mode-btn cartes-btn" data-mode="cartes">🐾 Cartes</button>
-        <button class="mode-btn mix-btn" data-mode="dessins-cartes">🎉 Dessin + Cartes</button>
-      </div>
+  <section id="background-select">
+    <h2>Décor</h2>
+    <div class="choices">
+      <button class="background-choice active" data-bg="foret">Forêt</button>
+      <button class="background-choice" data-bg="ocean">Océan</button>
+      <button class="background-choice" data-bg="ferme">Ferme</button>
+      <button class="background-choice" data-bg="neige">Neige</button>
     </div>
+  </section>
 
-    <!-- Importation dessins -->
-    <div id="import-dessins" class="page hidden">
-      <input type="file" id="file-input" accept="image/*" multiple>
-      <div id="dessins-preview"></div>
-      <button id="next-to-cards">Suivant</button>
+  <section id="animal-select">
+    <h2>Animaux</h2>
+    <div class="choices">
+      <button class="animal-choice" data-animal="renard">Renard</button>
+      <button class="animal-choice" data-animal="lapin">Lapin</button>
+      <button class="animal-choice" data-animal="hibou">Hibou</button>
     </div>
+  </section>
 
-    <!-- Choix cartes -->
-    <div id="cartes-section" class="page hidden">
-      <div id="cartes-container"></div>
-      <button id="choose-background">Choisir Fond</button>
-    </div>
+  <section id="action">
+    <button id="generate-story">Créer mon histoire</button>
+  </section>
 
-    <!-- Sélection fond -->
-    <div id="page-background" class="page hidden">
-      <h2>Choisis un fond</h2>
-      <div id="background-grid"></div>
-      <button id="random-background">Fond Aléatoire</button>
-      <button id="preview-btn">Voir Prévisualisation</button>
-    </div>
+  <section id="preview-container"></section>
 
-    <!-- Prévisualisation / scène -->
-    <div id="page-preview" class="page hidden">
-      <div id="preview-container">
-        <!-- objects & animals injected here -->
-        <div id="object-layer"></div>
-        <div id="animal-layer"></div>
-        <div id="ui-top">
-          <button id="play-audio">Jouer l'histoire</button>
-          <button id="stop-audio">Arrêter</button>
-        </div>
-      </div>
-      <button id="generate-story">Créer Histoire</button>
-    </div>
-
-  </div>
-
-<script src="app.js"></script>
-<script src="story.js"></script>
+  <script src="app.js"></script>
+  <script src="story.js"></script>
 </body>
 </html>
