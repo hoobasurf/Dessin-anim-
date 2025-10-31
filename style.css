@@ -1,54 +1,67 @@
 body {
-  font-family: "Comic Sans MS", cursive;
-  background: #f4f4f4;
+  font-family: "Poppins", sans-serif;
+  background-color: #eef3f0;
+  text-align: center;
   margin: 0;
   padding: 0;
-  text-align: center;
 }
 
-.container {
-  padding: 20px;
+header {
+  background: #4a7a4c;
+  color: white;
+  padding: 20px 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+h1 {
+  margin: 0;
+  font-size: 2em;
+}
+
+.choices {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0;
 }
 
 button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
+  background-color: #fff;
+  border: 2px solid #4a7a4c;
+  border-radius: 8px;
   padding: 10px 20px;
-  margin-top: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #3e8e41;
-}
-
-.background-choice,
-.animal-choice {
-  border: 2px solid transparent;
-  border-radius: 8px;
-  padding: 8px;
-  margin: 6px;
+  font-size: 1em;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.background-choice.active,
-.animal-choice.active {
-  border-color: gold;
-  box-shadow: 0 0 8px gold;
+button:hover, .active {
+  background-color: #4a7a4c;
+  color: white;
+}
+
+#generate-story {
+  margin-top: 20px;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  background-color: #6bb86e;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+#generate-story:hover {
+  background-color: #579d59;
 }
 
 #preview-container {
   position: relative;
   width: 100%;
-  height: 420px;
+  height: 500px;
+  margin-top: 30px;
   overflow: hidden;
-  border-radius: 10px;
-  margin-top: 15px;
-  background-color: #000;
+  background-color: #d9f0da;
 }
 
 .fond-scene {
@@ -56,20 +69,12 @@ button:hover {
   height: 100%;
   object-fit: cover;
   position: absolute;
-  top: 0;
   left: 0;
-  z-index: 1;
+  top: 0;
 }
 
-.objet-scene {
+.animal-scene, .objet-scene {
   position: absolute;
-  width: 80px;
-  z-index: 2;
-}
-
-.animal-scene {
-  position: absolute;
-  width: 130px;
-  z-index: 3;
-  transition: transform 0.3s ease;
+  width: 100px;
+  transition: transform 0.3s;
 }
