@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedBackground = "foret";
   let selectedAnimals = [];
 
-  // --- Sélection du décor ---
   backgroundChoices.forEach(btn => {
     btn.addEventListener("click", () => {
       selectedBackground = btn.dataset.bg;
@@ -15,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Sélection des animaux ---
   animalChoices.forEach(btn => {
     btn.addEventListener("click", () => {
       const name = btn.dataset.animal;
@@ -31,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Lancement de l’histoire ---
   generateStoryBtn.addEventListener("click", () => {
     startStory(selectedBackground, selectedAnimals);
   });
